@@ -1,0 +1,15 @@
+parameters:
+    locale:            en
+    secret:            ThisTokenIsNotSoSecretChangeIt
+
+    github.username:   yourloginname
+    github.password:   yourpassword
+
+    repositories:
+        phpcr:
+            include:
+                - phpcr
+                - phpcr-utils
+        jackalope:
+            exclude:
+                - jackalope-mongodb
