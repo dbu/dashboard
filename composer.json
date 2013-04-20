@@ -13,7 +13,11 @@
         "sensio/distribution-bundle": "2.2.*",
         "sensio/generator-bundle": "2.2.*",
         "knplabs/github-api": "1.2.*@dev",
-        "kriswallsmith/assetic": "1.1.*@alpha"
+        "friendsofsymfony/elastica-bundle": "dev-master",
+        "kriswallsmith/assetic": "1.1.*@alpha",
+        "leafo/lessphp": "0.3.*",
+        "twitter/bootstrap": "2.3.1",
+        "components/jquery": "1.9.*"
     },
     "scripts": {
         "post-install-cmd": [

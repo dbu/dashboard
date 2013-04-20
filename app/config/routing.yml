@@ -1,0 +1,4 @@
+dbu_dashboard:
+    resource: "@DbuDashboardBundle/Resources/config/routing.xml"
+    prefix:   /
+

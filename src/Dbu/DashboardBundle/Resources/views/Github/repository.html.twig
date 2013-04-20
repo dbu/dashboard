@@ -1,0 +1,34 @@
+{% set lastUser = '' %}
+
+{% for repo in repositories %}
+    {% if lastUser != repo.data.owner_login %}
+        {% if lastUser != '' %}
+                </div>
+            </div>
+        {% endif %}
+        <div class="section-organization accordion-group">
+        {% set lastUser = repo.data.owner_login %}
+        <h1 class="accordion-heading accordion-toggle" data-toggle="collapse" href="#{{ lastUser }}-repositories">{{ lastUser }}</h1>
+        <div id="{{ lastUser }}-repositories" class="section-repositories accordion-body collapse in">
+    {% endif %}
+    <div class="section-repository">
+        <h2>{{ repo.data.name }} ({{ repo.data.open_pull_count }})</h2>
+
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#{{ lastUser }}_-_{{ repo.data.name }}-pulls" data-toggle="tab">Pulls</a></li>
+            <li><a href="#{{ lastUser }}_-_{{ repo.data.name }}-issues" data-toggle="tab">Issues</a></li>
+        </ul>
+        <div class="tab-content">
+            <div id="{{ lastUser }}_-_{{ repo.data.name }}-pulls" class="tab-pane active">
+                {% include "DbuDashboardBundle:Github:pull.html.twig" with {"pulls": repo.data.pulls} %}
+            </div>
+            <div id="{{ lastUser }}_-_{{ repo.data.name }}-issues" class="tab-pane">
+                Not yet
+            </div>
+        </div>
+    </div>
+
+{% endfor %}
+
+    </div>
+</div>

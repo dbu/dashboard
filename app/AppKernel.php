@@ -13,8 +13,10 @@ class AppKernel extends Kernel
             new Symfony\Bundle\TwigBundle\TwigBundle(),
             new Symfony\Bundle\MonologBundle\MonologBundle(),
 //            new Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle(),
-//            new Symfony\Bundle\AsseticBundle\AsseticBundle(),
+            new Symfony\Bundle\AsseticBundle\AsseticBundle(),
             new Dbu\GhCollectorBundle\DbuGhCollectorBundle(),
+            new FOS\ElasticaBundle\FOSElasticaBundle(),
+            new Dbu\DashboardBundle\DbuDashboardBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

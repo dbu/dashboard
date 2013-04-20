@@ -1,0 +1,17 @@
+<ul>
+{% for pull in pulls %}
+    <li>
+        <a class="pull-request" href="{{ pull.html_url }}">#{{ pull.number }} {{ pull.title }}</a>
+        {# TODO ajaxify? #}
+        <div style="display:none">
+            <h2><a href="{{ pull.html_url }}">#{{ pull.number }} {{ pull.title }}</a></h2>
+            <div class="meta">
+                Created by {{ pull.user_login }} at {{ pull.created_at|date('d.m.Y - h:m') }}, last updated at {{ pull.updated_at|date('d.m.Y - h:m') }}
+            </div>
+            <div class="body">
+                {{ pull.body }}
+            </div>
+        </div>
+    </li>
+{% endfor %}
+</ul>

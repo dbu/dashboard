@@ -4,17 +4,28 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
-    <!--
-    <parameters>
-        <parameter key="dbu_gh_collector.example.class">Dbu\GhCollectorBundle\Example</parameter>
-    </parameters>
-
     <services>
-        <service id="dbu_gh_collector.example" class="%dbu_gh_collector.example.class%">
-            <argument type="service" id="service_id" />
-            <argument>plain_value</argument>
-            <argument>%parameter_name%</argument>
+
+        <service id="dbu_gh_collector.github.http_client" class="Github\HttpClient\CachedHttpClient">
+            <argument type="collection">
+                <argument key="cache_dir">/tmp/github-api-cache</argument>
+            </argument>
+        </service>
+
+        <service id="dbu_gh_collector.github.client" class="Github\Client">
+            <argument type="service" id="dbu_gh_collector.github.http_client"/>
+            <call method="authenticate">
+                <argument>%github.username%</argument>
+                <argument>%github.password%</argument>
+                <argument>http_password</argument>
+            </call>
+        </service>
+
+        <service id="dbu_gh_collector.github.synchronizer" class="Dbu\GhCollectorBundle\Github\Synchronizer">
+            <argument type="service" id="dbu_gh_collector.github.client" />
+            <argument type="service" id="fos_elastica.index.projects.github_repository" />
+            <!--argument type="service" id="fos_elastica.index.projects.github_pull" /-->
         </service>
     </services>
-    -->
+
 </container>
