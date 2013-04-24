@@ -15,12 +15,12 @@ class Synchronizer
 
     public function __construct(
         Client $github,
-        \Elastica_Type $repositoryType//,
-//        \Elastica_type $pullType
+        \Elastica_Type $repositoryType,
+        \Elastica_type $pullType
     ) {
         $this->github = $github;
         $this->repositoryType = $repositoryType;
-//        $this->pullType = $pullType;
+        $this->pullType = $pullType;
     }
 
     /**
@@ -59,7 +59,7 @@ class Synchronizer
                 isset($repository['open_issue_count'])
                     ? $repository['open_issue_count'] - count($pullRequests)
                     : 0;
-            $docs[] = new \Elastica_Document($repository['id'], $repository, 'github_repository');
+            $docs = array();
 
             foreach($pullRequests as $r) {
                 $r['user_login'] = $r['user']['login'];
@@ -67,7 +67,11 @@ class Synchronizer
                 unset($r['assignee']);
                 unset($r['head']);
                 unset($r['base']);
-                $repository['pulls'][] = $r; //new \Elastica_Document($r['id'], $r, 'github_pull');
+                $r['_parent'] = $repository['id'];
+                $docs[] = new \Elastica_Document($r['id'], $r, 'github_pull');
+            }
+            if ($docs) {
+                $this->pullType->addDocuments($docs);
             }
 
             $this->repositoryType->addDocument(

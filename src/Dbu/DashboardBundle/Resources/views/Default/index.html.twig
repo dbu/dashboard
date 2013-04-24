@@ -7,10 +7,14 @@
     {% endstylesheets %}
 </head>
 <body>
+<div id="toolbar">
+    <form method="GET"><input type="text" name="q" value="{{ q }}"/><input type="submit" value="search"/></form>
+    TODO: Have some facetting
+</div>
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span6">
-            {% include "DbuDashboardBundle:Github:repository.html.twig" with {"repositories": repositories} %}
+            {% include "DbuDashboardBundle:Github:repositoryList.html.twig" with {"repositories": repositories, "q": q} %}
         </div>
         <div class="span6" id="additional-info">
             <br/>(Hover over an issue to display information)

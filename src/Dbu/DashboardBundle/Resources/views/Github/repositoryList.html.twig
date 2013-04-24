@@ -1,0 +1,18 @@
+{% set lastUser = '' %}
+
+{% for repo in repositories %}
+    {% if lastUser != repo.data.owner_login %}
+        {% if lastUser != '' %}
+                </div>
+            </div>
+        {% endif %}
+        <div class="section-organization accordion-group">
+        {% set lastUser = repo.data.owner_login %}
+        <h1 class="accordion-heading accordion-toggle" data-toggle="collapse" href="#{{ lastUser }}-repositories">{{ lastUser }}</h1>
+        <div id="{{ lastUser }}-repositories" class="section-repositories accordion-body collapse in">
+    {% endif %}
+    {% render controller("DbuDashboardBundle:Default:repository", {"repository": repo, "q": q}) %}
+{% endfor %}
+
+    </div>
+</div>

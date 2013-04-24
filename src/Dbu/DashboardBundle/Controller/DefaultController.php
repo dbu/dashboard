@@ -2,6 +2,8 @@
 
 namespace Dbu\DashboardBundle\Controller;
 
+use Elastica\Filter\Term;
+use Elastica\Query;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class DefaultController extends Controller
@@ -12,11 +14,29 @@ class DefaultController extends Controller
             ? $this->getRequest()->query->get('q')
             : false;
 
-        /** @var $index \Elastica_Index */
+        /** @var $index \Elastica\Index */
         $index = $this->get('fos_elastica.index.projects');
-        $data = $index->search($this->buildOverviewQuery($q));
+        $repositories = $index->search($this->buildOverviewQuery(false));//$q));
 
-        return $this->render('DbuDashboardBundle:Default:index.html.twig', array('repositories' => $data));
+        return $this->render('DbuDashboardBundle:Default:index.html.twig', array(
+            'repositories' => $repositories,
+            'q' => $q,
+        ));
+    }
+
+    public function repositoryAction($repository, $q)
+    {
+        /** @var $index \Elastica\Index */
+        $index = $this->get('fos_elastica.index.projects');
+        $info = $repository->getData();
+        $pulls = $index->search($this->buildPullsQuery($info['id'], $q));
+
+        // TODO: issues
+
+        return $this->render('DbuDashboardBundle:Github:repository.html.twig', array(
+            'repo' => $repository,
+            'pulls' => $pulls->getResults(),
+        ));
     }
 
     public function detailsAction($id)
@@ -26,54 +46,79 @@ class DefaultController extends Controller
 
     private function buildOverviewQuery($q)
     {
-        $query = new \Elastica_Query();
+        $query = new Query();
 
-        $filterAnd = new \Elastica_Filter_And();
-        $filterAnd->addFilter(new \Elastica_Filter_Type('github_repository'));
+        $filterAnd = new \Elastica\Filter\BoolAnd();
+        $filterAnd->addFilter(new \Elastica\Filter\Type('github_repository'));
         $filterAnd->addFilter($this->buildRepositoryFilter());
 
         $query->setFilter($filterAnd);
 
-        $query->setLimit(5000);
+        $query->setSize(5000);
 
         $query->setSort(array('owner_login' => array('order' => 'asc')));
 
         if ($q) {
-            $bool = new \Elastica_Query_Bool();
+            $bool = new \Elastica\Query\Bool();
 
-            $fuzzy = new \Elastica_Query_Fuzzy();
+            $fuzzy = new \Elastica\Query\Fuzzy();
             $fuzzy->addField('full_name', array('value' => $q));
             $bool->addShould($fuzzy);
 
-            $fuzzy = new \Elastica_Query_Fuzzy();
+            $fuzzy = new \Elastica\Query\Fuzzy();
             $fuzzy->addField('description',  array('value' => $q));
             $bool->addShould($fuzzy);
 
             // add some fields from pull requests too
-            $fuzzy = new \Elastica_Query_Fuzzy();
-            $fuzzy->addField('title',  array('value' => $q));
-            $nested = new \Elastica_Query_Nested();
-            $nested->setPath('pulls');
-            $nested->setQuery($fuzzy);
-            $bool->addShould($nested);
-
-            $fuzzy = new \Elastica_Query_Fuzzy();
-            $fuzzy->addField('body',  array('value' => $q));
-            $nested = new \Elastica_Query_Nested();
-            $nested->setPath('pulls');
-            $nested->setQuery($fuzzy);
-            $bool->addShould($nested);
+            $child = new \Elastica\Query\HasChild($this->buildPullsQueryFragment($q), 'github_pull');
+            $bool->addShould($child);
 
             $query->setQuery($bool);
         } else {
-            $query->setQuery(new \Elastica_Query_MatchAll());
+            $query->setQuery(new \Elastica\Query\MatchAll());
         }
 //echo '<pre>';var_dump($query->toArray());die;
         return $query;
     }
 
+    private function buildPullsQuery($repositoryId, $q)
+    {
+        $query = new Query();
+
+        $filterRepository = new \Elastica\Filter\BoolAnd();
+        $filterRepository->addFilter(new \Elastica\Filter\Type('github_pull'));
+        $filterRepository->addFilter(new \Elastica\Filter\Term(array('_parent' => $repositoryId)));
+
+        $query->setFilter($filterRepository);
+
+        $query->setSize(5000);
+
+        $query->setSort(array('id' => array('order' => 'desc')));
+
+        if ($q) {
+            $query->setQuery($this->buildPullsQueryFragment($q));
+        } else {
+            $query->setQuery(new \Elastica\Query\MatchAll());
+        }
+
+        return $query;
+    }
+
+    private function buildPullsQueryFragment($q)
+    {
+        $pullsBool = new \Elastica\Query\Bool();
+        $fuzzy = new \Elastica\Query\Fuzzy();
+        $fuzzy->addField('title',  array('value' => $q));
+        $pullsBool->addShould($fuzzy);
+        $fuzzy = new \Elastica\Query\Fuzzy();
+        $fuzzy->addField('body',  array('value' => $q));
+        $pullsBool->addShould($fuzzy);
+
+        return $pullsBool;
+    }
+
     /**
-     * @return \Elastica_Filter_Abstract
+     * @return \Elastica\Filter\AbstractFilter
      */
     private function buildRepositoryFilter()
     {
@@ -97,15 +142,15 @@ class DefaultController extends Controller
             }
         }
 
-        $and = new \Elastica_Filter_And();
-        $and->addFilter(new \Elastica_Filter_Terms('owner_login', $owners));
-        $and->addFilter(new \Elastica_Filter_Not(
-            new \Elastica_Filter_Terms('name', $excludes)
+        $and = new \Elastica\Filter\BoolAnd();
+        $and->addFilter(new \Elastica\Filter\Terms('owner_login', $owners));
+        $and->addFilter(new \Elastica\Filter\BoolNot(
+            new \Elastica\Filter\Terms('name', $excludes)
         ));
 
-        $or = new \Elastica_Filter_Or();
+        $or = new \Elastica\Filter\BoolOr();
         $or->addFilter(
-          new \Elastica_Filter_Terms('full_name', $includes)
+          new \Elastica\Filter\Terms('full_name', $includes)
         );
         $or->addFilter($and);
 //echo '<pre>';var_dump($or->toArray());die;
