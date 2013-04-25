@@ -17,6 +17,7 @@ class AppKernel extends Kernel
             new Dbu\GhCollectorBundle\DbuGhCollectorBundle(),
             new FOS\ElasticaBundle\FOSElasticaBundle(),
             new Dbu\DashboardBundle\DbuDashboardBundle(),
+            new Knp\Bundle\MarkdownBundle\KnpMarkdownBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

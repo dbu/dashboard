@@ -25,6 +25,7 @@
             <argument type="service" id="dbu_gh_collector.github.client" />
             <argument type="service" id="fos_elastica.index.projects.github_repository" />
             <argument type="service" id="fos_elastica.index.projects.github_pull" />
+            <argument type="service" id="fos_elastica.index.projects.github_issue" />
         </service>
     </services>
 

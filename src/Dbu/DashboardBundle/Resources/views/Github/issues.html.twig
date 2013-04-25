@@ -1,0 +1,24 @@
+<ul>
+{% for issue in issues %}
+    <li>
+        <a class="issue-link" href="{{ issue.data.html_url }}">#{{ issue.data.number }} {{ issue.data.title }}</a>
+        {% if issue.data.assignee_login %}
+            <em>{{ issue.data.assignee_login }}</em>
+        {% else %}
+            <em>not assigned</em>
+        {% endif %}
+        {# TODO ajaxify? #}
+        <div style="display:none">
+            <h2><a href="{{ issue.data.html_url }}">#{{ issue.data.number }} {{ issue.data.title }}</a></h2>
+            <div class="meta">
+                Created by {{ issue.data.user_login }} at {{ issue.data.created_at|date('d.m.Y - h:m') }},
+                last updated at {{ issue.data.updated_at|date('d.m.Y - h:m') }}
+                {% if issue.data.assignee_login %}<br/>Assigned to <strong>{{ issue.data.assignee_login }}</strong>{% endif %}
+            </div>
+            <div class="body">
+                {{ issue.data.body|markdown }}
+            </div>
+        </div>
+    </li>
+{% endfor %}
+</ul>

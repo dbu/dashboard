@@ -1,0 +1,877 @@
+array(9) {
+  [0]=>
+  array(19) {
+    ["url"]=>
+    string(62) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/53"
+    ["labels_url"]=>
+    string(76) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/53/labels{/name}"
+    ["comments_url"]=>
+    string(71) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/53/comments"
+    ["events_url"]=>
+    string(69) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/53/events"
+    ["html_url"]=>
+    string(52) "https://github.com/symfony-cmf/BlockBundle/issues/53"
+    ["id"]=>
+    int(13446973)
+    ["number"]=>
+    int(53)
+    ["title"]=>
+    string(22) "Implement BlockContext"
+    ["user"]=>
+    array(16) {
+      ["login"]=>
+      string(6) "rmsint"
+
+    ["labels"]=>
+    array(1) {
+      [0]=>
+      array(3) {
+        ["url"]=>
+        string(71) "https://api.github.com/repos/symfony-cmf/BlockBundle/labels/enhancement"
+        ["name"]=>
+        string(11) "enhancement"
+        ["color"]=>
+        string(6) "84b6eb"
+      }
+    }
+    ["state"]=>
+    string(4) "open"
+    ["assignee"]=>
+    NULL
+    ["milestone"]=>
+    NULL
+    ["comments"]=>
+    int(0)
+    ["created_at"]=>
+    string(20) "2013-04-21T10:05:09Z"
+    ["updated_at"]=>
+    string(20) "2013-04-21T10:07:17Z"
+    ["closed_at"]=>
+    NULL
+    ["pull_request"]=>
+    array(3) {
+      ["html_url"]=>
+      NULL
+      ["diff_url"]=>
+      NULL
+      ["patch_url"]=>
+      NULL
+    }
+    ["body"]=>
+    string(651) "Once the BlockContext, see https://github.com/sonata-project/SonataBlockBundle/pull/55, is implemented we can do some updates:
+- move all rendering to the templates, see remark [here](https://github.com/sonata-project/SonataBlockBundle/pull/55#discussion_r3588418)
+- update Block services and Block documents
+- update the Block caching to use the BlockContext, I think we can also cache the BlockContext separately to be be able to load a block with its configuration as it was called from a template
+- probably close or update these PR's: https://github.com/symfony-cmf/BlockBundle/pull/13, https://github.com/symfony-cmf/symfony-cmf-docs/pull/78"
+  }
+
+
+
+
+
+
+
+
+
+
+
+  [1]=>
+  array(19) {
+    ["url"]=>
+    string(62) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/52"
+    ["labels_url"]=>
+    string(76) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/52/labels{/name}"
+    ["comments_url"]=>
+    string(71) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/52/comments"
+    ["events_url"]=>
+    string(69) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/52/events"
+    ["html_url"]=>
+    string(52) "https://github.com/symfony-cmf/BlockBundle/issues/52"
+    ["id"]=>
+    int(13446888)
+    ["number"]=>
+    int(52)
+    ["title"]=>
+    string(51) "Clean up code and remove duplication in BlockBundle"
+    ["user"]=>
+    array(16) {
+      ["login"]=>
+      string(9) "dantleech"
+      ["id"]=>
+      int(530801)
+      ["avatar_url"]=>
+      string(158) "https://secure.gravatar.com/avatar/c465efe6980caacfdb43780d7bd5b0dc?d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png"
+      ["gravatar_id"]=>
+      string(32) "c465efe6980caacfdb43780d7bd5b0dc"
+      ["url"]=>
+      string(38) "https://api.github.com/users/dantleech"
+      ["html_url"]=>
+      string(28) "https://github.com/dantleech"
+      ["followers_url"]=>
+      string(48) "https://api.github.com/users/dantleech/followers"
+      ["following_url"]=>
+      string(48) "https://api.github.com/users/dantleech/following"
+      ["gists_url"]=>
+      string(54) "https://api.github.com/users/dantleech/gists{/gist_id}"
+      ["starred_url"]=>
+      string(61) "https://api.github.com/users/dantleech/starred{/owner}{/repo}"
+      ["subscriptions_url"]=>
+      string(52) "https://api.github.com/users/dantleech/subscriptions"
+      ["organizations_url"]=>
+      string(43) "https://api.github.com/users/dantleech/orgs"
+      ["repos_url"]=>
+      string(44) "https://api.github.com/users/dantleech/repos"
+      ["events_url"]=>
+      string(55) "https://api.github.com/users/dantleech/events{/privacy}"
+      ["received_events_url"]=>
+      string(54) "https://api.github.com/users/dantleech/received_events"
+      ["type"]=>
+      string(4) "User"
+    }
+    ["labels"]=>
+    array(0) {
+    }
+    ["state"]=>
+    string(4) "open"
+    ["assignee"]=>
+    NULL
+    ["milestone"]=>
+    NULL
+    ["comments"]=>
+    int(2)
+    ["created_at"]=>
+    string(20) "2013-04-21T09:57:35Z"
+    ["updated_at"]=>
+    string(20) "2013-04-23T20:47:24Z"
+    ["closed_at"]=>
+    NULL
+    ["pull_request"]=>
+    array(3) {
+      ["html_url"]=>
+      NULL
+      ["diff_url"]=>
+      NULL
+      ["patch_url"]=>
+      NULL
+    }
+    ["body"]=>
+    string(229) "- Remove duplicated code in Admin classes
+- We should probably either merge all the admin service.xml files into one file or at least prefix "admin" them instead of suffixing it - its difficult to see where things are currently."
+  }
+  [2]=>
+  array(19) {
+    ["url"]=>
+    string(62) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/51"
+    ["labels_url"]=>
+    string(76) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/51/labels{/name}"
+    ["comments_url"]=>
+    string(71) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/51/comments"
+    ["events_url"]=>
+    string(69) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/51/events"
+    ["html_url"]=>
+    string(52) "https://github.com/symfony-cmf/BlockBundle/issues/51"
+    ["id"]=>
+    int(13440781)
+    ["number"]=>
+    int(51)
+    ["title"]=>
+    string(15) "Added TextBlock"
+    ["user"]=>
+    array(16) {
+      ["login"]=>
+      string(9) "dantleech"
+      ["id"]=>
+      int(530801)
+      ["avatar_url"]=>
+      string(158) "https://secure.gravatar.com/avatar/c465efe6980caacfdb43780d7bd5b0dc?d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png"
+      ["gravatar_id"]=>
+      string(32) "c465efe6980caacfdb43780d7bd5b0dc"
+      ["url"]=>
+      string(38) "https://api.github.com/users/dantleech"
+      ["html_url"]=>
+      string(28) "https://github.com/dantleech"
+      ["followers_url"]=>
+      string(48) "https://api.github.com/users/dantleech/followers"
+      ["following_url"]=>
+      string(48) "https://api.github.com/users/dantleech/following"
+      ["gists_url"]=>
+      string(54) "https://api.github.com/users/dantleech/gists{/gist_id}"
+      ["starred_url"]=>
+      string(61) "https://api.github.com/users/dantleech/starred{/owner}{/repo}"
+      ["subscriptions_url"]=>
+      string(52) "https://api.github.com/users/dantleech/subscriptions"
+      ["organizations_url"]=>
+      string(43) "https://api.github.com/users/dantleech/orgs"
+      ["repos_url"]=>
+      string(44) "https://api.github.com/users/dantleech/repos"
+      ["events_url"]=>
+      string(55) "https://api.github.com/users/dantleech/events{/privacy}"
+      ["received_events_url"]=>
+      string(54) "https://api.github.com/users/dantleech/received_events"
+      ["type"]=>
+      string(4) "User"
+    }
+    ["labels"]=>
+    array(0) {
+    }
+    ["state"]=>
+    string(4) "open"
+    ["assignee"]=>
+    NULL
+    ["milestone"]=>
+    NULL
+    ["comments"]=>
+    int(12)
+    ["created_at"]=>
+    string(20) "2013-04-20T20:43:15Z"
+    ["updated_at"]=>
+    string(20) "2013-04-24T18:57:39Z"
+    ["closed_at"]=>
+    NULL
+    ["pull_request"]=>
+    array(3) {
+      ["html_url"]=>
+      string(50) "https://github.com/symfony-cmf/BlockBundle/pull/51"
+      ["diff_url"]=>
+      string(55) "https://github.com/symfony-cmf/BlockBundle/pull/51.diff"
+      ["patch_url"]=>
+      string(56) "https://github.com/symfony-cmf/BlockBundle/pull/51.patch"
+    }
+    ["body"]=>
+    string(236) "- This block has only text
+- No title, or surrounding paragraph, just content.
+
+For use for arbitary text on a website
+
+This PR is missing create PHP support, which would be neat, but as I'm not currently using it, I can't test it."
+  }
+  [3]=>
+  array(19) {
+    ["url"]=>
+    string(62) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/50"
+    ["labels_url"]=>
+    string(76) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/50/labels{/name}"
+    ["comments_url"]=>
+    string(71) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/50/comments"
+    ["events_url"]=>
+    string(69) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/50/events"
+    ["html_url"]=>
+    string(52) "https://github.com/symfony-cmf/BlockBundle/issues/50"
+    ["id"]=>
+    int(13439224)
+    ["number"]=>
+    int(50)
+    ["title"]=>
+    string(53) "[proposal] Refactor BlockAdmin to support inheritance"
+    ["user"]=>
+    array(16) {
+      ["login"]=>
+      string(9) "dantleech"
+      ["id"]=>
+      int(530801)
+      ["avatar_url"]=>
+      string(158) "https://secure.gravatar.com/avatar/c465efe6980caacfdb43780d7bd5b0dc?d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png"
+      ["gravatar_id"]=>
+      string(32) "c465efe6980caacfdb43780d7bd5b0dc"
+      ["url"]=>
+      string(38) "https://api.github.com/users/dantleech"
+      ["html_url"]=>
+      string(28) "https://github.com/dantleech"
+      ["followers_url"]=>
+      string(48) "https://api.github.com/users/dantleech/followers"
+      ["following_url"]=>
+      string(48) "https://api.github.com/users/dantleech/following"
+      ["gists_url"]=>
+      string(54) "https://api.github.com/users/dantleech/gists{/gist_id}"
+      ["starred_url"]=>
+      string(61) "https://api.github.com/users/dantleech/starred{/owner}{/repo}"
+      ["subscriptions_url"]=>
+      string(52) "https://api.github.com/users/dantleech/subscriptions"
+      ["organizations_url"]=>
+      string(43) "https://api.github.com/users/dantleech/orgs"
+      ["repos_url"]=>
+      string(44) "https://api.github.com/users/dantleech/repos"
+      ["events_url"]=>
+      string(55) "https://api.github.com/users/dantleech/events{/privacy}"
+      ["received_events_url"]=>
+      string(54) "https://api.github.com/users/dantleech/received_events"
+      ["type"]=>
+      string(4) "User"
+    }
+    ["labels"]=>
+    array(0) {
+    }
+    ["state"]=>
+    string(4) "open"
+    ["assignee"]=>
+    NULL
+    ["milestone"]=>
+    array(13) {
+      ["url"]=>
+      string(65) "https://api.github.com/repos/symfony-cmf/BlockBundle/milestones/1"
+      ["labels_url"]=>
+      string(72) "https://api.github.com/repos/symfony-cmf/BlockBundle/milestones/1/labels"
+      ["id"]=>
+      int(317225)
+      ["number"]=>
+      int(1)
+      ["title"]=>
+      string(3) "1.0"
+      ["description"]=>
+      string(0) ""
+      ["creator"]=>
+      array(16) {
+        ["login"]=>
+        string(8) "lsmith77"
+        ["id"]=>
+        int(300279)
+        ["avatar_url"]=>
+        string(158) "https://secure.gravatar.com/avatar/54787afbd0e7c30936101c2fa84bd89b?d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png"
+        ["gravatar_id"]=>
+        string(32) "54787afbd0e7c30936101c2fa84bd89b"
+        ["url"]=>
+        string(37) "https://api.github.com/users/lsmith77"
+        ["html_url"]=>
+        string(27) "https://github.com/lsmith77"
+        ["followers_url"]=>
+        string(47) "https://api.github.com/users/lsmith77/followers"
+        ["following_url"]=>
+        string(47) "https://api.github.com/users/lsmith77/following"
+        ["gists_url"]=>
+        string(53) "https://api.github.com/users/lsmith77/gists{/gist_id}"
+        ["starred_url"]=>
+        string(60) "https://api.github.com/users/lsmith77/starred{/owner}{/repo}"
+        ["subscriptions_url"]=>
+        string(51) "https://api.github.com/users/lsmith77/subscriptions"
+        ["organizations_url"]=>
+        string(42) "https://api.github.com/users/lsmith77/orgs"
+        ["repos_url"]=>
+        string(43) "https://api.github.com/users/lsmith77/repos"
+        ["events_url"]=>
+        string(54) "https://api.github.com/users/lsmith77/events{/privacy}"
+        ["received_events_url"]=>
+        string(53) "https://api.github.com/users/lsmith77/received_events"
+        ["type"]=>
+        string(4) "User"
+      }
+      ["open_issues"]=>
+      int(3)
+      ["closed_issues"]=>
+      int(1)
+      ["state"]=>
+      string(4) "open"
+      ["created_at"]=>
+      string(20) "2013-04-20T18:41:00Z"
+      ["updated_at"]=>
+      string(20) "2013-04-21T15:53:34Z"
+      ["due_on"]=>
+      string(20) "2013-06-30T07:00:00Z"
+    }
+    ["comments"]=>
+    int(6)
+    ["created_at"]=>
+    string(20) "2013-04-20T18:30:44Z"
+    ["updated_at"]=>
+    string(20) "2013-04-24T11:41:39Z"
+    ["closed_at"]=>
+    NULL
+    ["pull_request"]=>
+    array(3) {
+      ["html_url"]=>
+      NULL
+      ["diff_url"]=>
+      NULL
+      ["patch_url"]=>
+      NULL
+    }
+    ["body"]=>
+    string(504) "I think it should be possible to support inheritance in SonataAdmin, so effectively we can have just a single list of block contents and one item on the dashboard "Block Content"
+
+I think this would make the interface less confusing and remove duplicate code.
+
+We could also tidy up the code a bit whilst we're at it, maybe moving the various XML admin configs into a single file, or at least prefix them with "admin" instead of suffixing them. (difficult to see whats going in the ``config`` folder)"
+  }
+  [4]=>
+  array(19) {
+    ["url"]=>
+    string(62) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/38"
+    ["labels_url"]=>
+    string(76) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/38/labels{/name}"
+    ["comments_url"]=>
+    string(71) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/38/comments"
+    ["events_url"]=>
+    string(69) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/38/events"
+    ["html_url"]=>
+    string(52) "https://github.com/symfony-cmf/BlockBundle/issues/38"
+    ["id"]=>
+    int(12020095)
+    ["number"]=>
+    int(38)
+    ["title"]=>
+    string(53) "cleanup slideshow admin when features are implemented"
+    ["user"]=>
+    array(16) {
+      ["login"]=>
+      string(3) "dbu"
+      ["id"]=>
+      int(76576)
+      ["avatar_url"]=>
+      string(158) "https://secure.gravatar.com/avatar/c9f4f8ce2c2936bacaf49500b5a127dc?d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png"
+      ["gravatar_id"]=>
+      string(32) "c9f4f8ce2c2936bacaf49500b5a127dc"
+      ["url"]=>
+      string(32) "https://api.github.com/users/dbu"
+      ["html_url"]=>
+      string(22) "https://github.com/dbu"
+      ["followers_url"]=>
+      string(42) "https://api.github.com/users/dbu/followers"
+      ["following_url"]=>
+      string(42) "https://api.github.com/users/dbu/following"
+      ["gists_url"]=>
+      string(48) "https://api.github.com/users/dbu/gists{/gist_id}"
+      ["starred_url"]=>
+      string(55) "https://api.github.com/users/dbu/starred{/owner}{/repo}"
+      ["subscriptions_url"]=>
+      string(46) "https://api.github.com/users/dbu/subscriptions"
+      ["organizations_url"]=>
+      string(37) "https://api.github.com/users/dbu/orgs"
+      ["repos_url"]=>
+      string(38) "https://api.github.com/users/dbu/repos"
+      ["events_url"]=>
+      string(49) "https://api.github.com/users/dbu/events{/privacy}"
+      ["received_events_url"]=>
+      string(48) "https://api.github.com/users/dbu/received_events"
+      ["type"]=>
+      string(4) "User"
+    }
+    ["labels"]=>
+    array(0) {
+    }
+    ["state"]=>
+    string(4) "open"
+    ["assignee"]=>
+    NULL
+    ["milestone"]=>
+    array(13) {
+      ["url"]=>
+      string(65) "https://api.github.com/repos/symfony-cmf/BlockBundle/milestones/1"
+      ["labels_url"]=>
+      string(72) "https://api.github.com/repos/symfony-cmf/BlockBundle/milestones/1/labels"
+      ["id"]=>
+      int(317225)
+      ["number"]=>
+      int(1)
+      ["title"]=>
+      string(3) "1.0"
+      ["description"]=>
+      string(0) ""
+      ["creator"]=>
+      array(16) {
+        ["login"]=>
+        string(8) "lsmith77"
+        ["id"]=>
+        int(300279)
+        ["avatar_url"]=>
+        string(158) "https://secure.gravatar.com/avatar/54787afbd0e7c30936101c2fa84bd89b?d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png"
+        ["gravatar_id"]=>
+        string(32) "54787afbd0e7c30936101c2fa84bd89b"
+        ["url"]=>
+        string(37) "https://api.github.com/users/lsmith77"
+        ["html_url"]=>
+        string(27) "https://github.com/lsmith77"
+        ["followers_url"]=>
+        string(47) "https://api.github.com/users/lsmith77/followers"
+        ["following_url"]=>
+        string(47) "https://api.github.com/users/lsmith77/following"
+        ["gists_url"]=>
+        string(53) "https://api.github.com/users/lsmith77/gists{/gist_id}"
+        ["starred_url"]=>
+        string(60) "https://api.github.com/users/lsmith77/starred{/owner}{/repo}"
+        ["subscriptions_url"]=>
+        string(51) "https://api.github.com/users/lsmith77/subscriptions"
+        ["organizations_url"]=>
+        string(42) "https://api.github.com/users/lsmith77/orgs"
+        ["repos_url"]=>
+        string(43) "https://api.github.com/users/lsmith77/repos"
+        ["events_url"]=>
+        string(54) "https://api.github.com/users/lsmith77/events{/privacy}"
+        ["received_events_url"]=>
+        string(53) "https://api.github.com/users/lsmith77/received_events"
+        ["type"]=>
+        string(4) "User"
+      }
+      ["open_issues"]=>
+      int(3)
+      ["closed_issues"]=>
+      int(1)
+      ["state"]=>
+      string(4) "open"
+      ["created_at"]=>
+      string(20) "2013-04-20T18:41:00Z"
+      ["updated_at"]=>
+      string(20) "2013-04-21T15:53:34Z"
+      ["due_on"]=>
+      string(20) "2013-06-30T07:00:00Z"
+    }
+    ["comments"]=>
+    int(0)
+    ["created_at"]=>
+    string(20) "2013-03-14T14:18:46Z"
+    ["updated_at"]=>
+    string(20) "2013-04-20T18:41:31Z"
+    ["closed_at"]=>
+    NULL
+    ["pull_request"]=>
+    array(3) {
+      ["html_url"]=>
+      NULL
+      ["diff_url"]=>
+      NULL
+      ["patch_url"]=>
+      NULL
+    }
+    ["body"]=>
+    string(727) "#32 has a couple of open todos blocked by sonata and phpcr-odm missing features
+
+* the sonata admin is creating random document names. if http://www.doctrine-project.org/jira/browse/PHPCR-103 is implemented, we can use that and drop the code
+* the sonata admin is reordering the children itself. sonata_type_collection could reorder the children, or we could build a sonata_phpcr_type_collection that adds this behaviour https://github.com/sonata-project/SonataAdminBundle/issues/1224
+* whether the image is required is determined by the admin class which does have *a* image block, but not necessarily the correct one. if we manage to do https://github.com/doctrine/DoctrinePHPCRBundle/issues/43 this problem would be gone"
+  }
+  [5]=>
+  array(19) {
+    ["url"]=>
+    string(62) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/35"
+    ["labels_url"]=>
+    string(76) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/35/labels{/name}"
+    ["comments_url"]=>
+    string(71) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/35/comments"
+    ["events_url"]=>
+    string(69) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/35/events"
+    ["html_url"]=>
+    string(52) "https://github.com/symfony-cmf/BlockBundle/issues/35"
+    ["id"]=>
+    int(11758026)
+    ["number"]=>
+    int(35)
+    ["title"]=>
+    string(50) "implement support for the PublishWorkflowInterface"
+    ["user"]=>
+    array(16) {
+      ["login"]=>
+      string(8) "lsmith77"
+      ["id"]=>
+      int(300279)
+      ["avatar_url"]=>
+      string(158) "https://secure.gravatar.com/avatar/54787afbd0e7c30936101c2fa84bd89b?d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png"
+      ["gravatar_id"]=>
+      string(32) "54787afbd0e7c30936101c2fa84bd89b"
+      ["url"]=>
+      string(37) "https://api.github.com/users/lsmith77"
+      ["html_url"]=>
+      string(27) "https://github.com/lsmith77"
+      ["followers_url"]=>
+      string(47) "https://api.github.com/users/lsmith77/followers"
+      ["following_url"]=>
+      string(47) "https://api.github.com/users/lsmith77/following"
+      ["gists_url"]=>
+      string(53) "https://api.github.com/users/lsmith77/gists{/gist_id}"
+      ["starred_url"]=>
+      string(60) "https://api.github.com/users/lsmith77/starred{/owner}{/repo}"
+      ["subscriptions_url"]=>
+      string(51) "https://api.github.com/users/lsmith77/subscriptions"
+      ["organizations_url"]=>
+      string(42) "https://api.github.com/users/lsmith77/orgs"
+      ["repos_url"]=>
+      string(43) "https://api.github.com/users/lsmith77/repos"
+      ["events_url"]=>
+      string(54) "https://api.github.com/users/lsmith77/events{/privacy}"
+      ["received_events_url"]=>
+      string(53) "https://api.github.com/users/lsmith77/received_events"
+      ["type"]=>
+      string(4) "User"
+    }
+    ["labels"]=>
+    array(0) {
+    }
+    ["state"]=>
+    string(4) "open"
+    ["assignee"]=>
+    NULL
+    ["milestone"]=>
+    NULL
+    ["comments"]=>
+    int(0)
+    ["created_at"]=>
+    string(20) "2013-03-07T12:50:25Z"
+    ["updated_at"]=>
+    string(20) "2013-03-07T12:50:25Z"
+    ["closed_at"]=>
+    NULL
+    ["pull_request"]=>
+    array(3) {
+      ["html_url"]=>
+      NULL
+      ["diff_url"]=>
+      NULL
+      ["patch_url"]=>
+      NULL
+    }
+    ["body"]=>
+    string(0) ""
+  }
+  [6]=>
+  array(19) {
+    ["url"]=>
+    string(62) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/28"
+    ["labels_url"]=>
+    string(76) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/28/labels{/name}"
+    ["comments_url"]=>
+    string(71) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/28/comments"
+    ["events_url"]=>
+    string(69) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/28/events"
+    ["html_url"]=>
+    string(52) "https://github.com/symfony-cmf/BlockBundle/issues/28"
+    ["id"]=>
+    int(10393876)
+    ["number"]=>
+    int(28)
+    ["title"]=>
+    string(50) "make cache related meta data editable in the admin"
+    ["user"]=>
+    array(16) {
+      ["login"]=>
+      string(8) "lsmith77"
+      ["id"]=>
+      int(300279)
+      ["avatar_url"]=>
+      string(158) "https://secure.gravatar.com/avatar/54787afbd0e7c30936101c2fa84bd89b?d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png"
+      ["gravatar_id"]=>
+      string(32) "54787afbd0e7c30936101c2fa84bd89b"
+      ["url"]=>
+      string(37) "https://api.github.com/users/lsmith77"
+      ["html_url"]=>
+      string(27) "https://github.com/lsmith77"
+      ["followers_url"]=>
+      string(47) "https://api.github.com/users/lsmith77/followers"
+      ["following_url"]=>
+      string(47) "https://api.github.com/users/lsmith77/following"
+      ["gists_url"]=>
+      string(53) "https://api.github.com/users/lsmith77/gists{/gist_id}"
+      ["starred_url"]=>
+      string(60) "https://api.github.com/users/lsmith77/starred{/owner}{/repo}"
+      ["subscriptions_url"]=>
+      string(51) "https://api.github.com/users/lsmith77/subscriptions"
+      ["organizations_url"]=>
+      string(42) "https://api.github.com/users/lsmith77/orgs"
+      ["repos_url"]=>
+      string(43) "https://api.github.com/users/lsmith77/repos"
+      ["events_url"]=>
+      string(54) "https://api.github.com/users/lsmith77/events{/privacy}"
+      ["received_events_url"]=>
+      string(53) "https://api.github.com/users/lsmith77/received_events"
+      ["type"]=>
+      string(4) "User"
+    }
+    ["labels"]=>
+    array(1) {
+      [0]=>
+      array(3) {
+        ["url"]=>
+        string(71) "https://api.github.com/repos/symfony-cmf/BlockBundle/labels/enhancement"
+        ["name"]=>
+        string(11) "enhancement"
+        ["color"]=>
+        string(6) "84b6eb"
+      }
+    }
+    ["state"]=>
+    string(4) "open"
+    ["assignee"]=>
+    NULL
+    ["milestone"]=>
+    NULL
+    ["comments"]=>
+    int(0)
+    ["created_at"]=>
+    string(20) "2013-01-28T21:40:49Z"
+    ["updated_at"]=>
+    string(20) "2013-01-28T21:40:49Z"
+    ["closed_at"]=>
+    NULL
+    ["pull_request"]=>
+    array(3) {
+      ["html_url"]=>
+      NULL
+      ["diff_url"]=>
+      NULL
+      ["patch_url"]=>
+      NULL
+    }
+    ["body"]=>
+    string(118) "when SonataCacheBundle is available we should automatically make the relevant metadata fields editable in the admin UI"
+  }
+
+
+  [7]=>
+  array(19) {
+    ["url"]=>
+    string(62) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/13"
+    ["labels_url"]=>
+    string(76) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/13/labels{/name}"
+    ["comments_url"]=>
+    string(71) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/13/comments"
+    ["events_url"]=>
+    string(69) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/13/events"
+    ["html_url"]=>
+    string(52) "https://github.com/symfony-cmf/BlockBundle/issues/13"
+    ["id"]=>
+    int(9927037)
+    ["number"]=>
+    int(13)
+    ["title"]=>
+    string(23) "[WIP] Add block options"
+    ["user"]=>
+    array(16) {
+      ["login"]=>
+      string(6) "rmsint"
+    }
+    ["labels"]=>
+    array(0) {
+    }
+    ["state"]=>
+    string(4) "open"
+    ["assignee"]=>
+    NULL
+    ["comments"]=>
+    int(17)
+    ["created_at"]=>
+    string(20) "2013-01-13T21:49:18Z"
+    ["updated_at"]=>
+    string(20) "2013-04-23T20:17:57Z"
+    ["closed_at"]=>
+    NULL
+    ["pull_request"]=>
+    array(3) {
+      ["html_url"]=>
+      string(50) "https://github.com/symfony-cmf/BlockBundle/pull/13"
+      ["diff_url"]=>
+      string(55) "https://github.com/symfony-cmf/BlockBundle/pull/13.diff"
+      ["patch_url"]=>
+      string(56) "https://github.com/symfony-cmf/BlockBundle/pull/13.patch"
+    }
+    ["body"]=>
+    string(1264) "This PR adds the feature to overide options like the template. See https://groups.google.com/forum/?fromgroups=#!topic/symfony-cmf-devs/_t0jQCsdEcU I think this could be a solution, it works without BC breaks on the BlockInterface. It is probably far from good, but this will give an idea and could start discussion.
+
+It allows to do things like this in the template:
+
+```
+    {{ sonata_block_render({
+        'name': 'additionalInfoBlock',
+        'template': 'SandboxMainBundle:Block:overloaded_container_block.html.twig',
+        'attr': {
+            'class': 'additional-info-block'
+        },
+        'settings': {
+            'divisibleBy': 3,
+            'divisibleClass': 'row-fluid',
+            'childClass': 'span4'
+        },
+        'children': {
+            'symfony_cmf.block.simple': {
+                'template': 'SandboxMainBundle:Block:overloaded_block_simple.html.twig',
+                'attr': {
+                    'class': 'simple-block'
+                }
+            }
+        }
+    }) }}
+```
+
+Furthermore configuration for a block is split in:
+* settings: fe. a url for a feed, this configuration could be changed through a UI
+* options: configuration to be used in templates etc. but not changed through a UI"
+  }
+
+  [8]=>
+  array(19) {
+    ["url"]=>
+    string(61) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/2"
+    ["labels_url"]=>
+    string(75) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/2/labels{/name}"
+    ["comments_url"]=>
+    string(70) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/2/comments"
+    ["events_url"]=>
+    string(68) "https://api.github.com/repos/symfony-cmf/BlockBundle/issues/2/events"
+    ["html_url"]=>
+    string(51) "https://github.com/symfony-cmf/BlockBundle/issues/2"
+    ["id"]=>
+    int(4770561)
+    ["number"]=>
+    int(2)
+    ["title"]=>
+    string(47) "frontend drag'n'drop reordering of child blocks"
+    ["user"]=>
+    array(16) {
+      ["login"]=>
+      string(13) "benoitpointet"
+      ["id"]=>
+      int(104787)
+      ["avatar_url"]=>
+      string(158) "https://secure.gravatar.com/avatar/e2fd75356b4ca9c778e0c7f269a99a94?d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png"
+      ["gravatar_id"]=>
+      string(32) "e2fd75356b4ca9c778e0c7f269a99a94"
+      ["url"]=>
+      string(42) "https://api.github.com/users/benoitpointet"
+      ["html_url"]=>
+      string(32) "https://github.com/benoitpointet"
+      ["followers_url"]=>
+      string(52) "https://api.github.com/users/benoitpointet/followers"
+      ["following_url"]=>
+      string(52) "https://api.github.com/users/benoitpointet/following"
+      ["gists_url"]=>
+      string(58) "https://api.github.com/users/benoitpointet/gists{/gist_id}"
+      ["starred_url"]=>
+      string(65) "https://api.github.com/users/benoitpointet/starred{/owner}{/repo}"
+      ["subscriptions_url"]=>
+      string(56) "https://api.github.com/users/benoitpointet/subscriptions"
+      ["organizations_url"]=>
+      string(47) "https://api.github.com/users/benoitpointet/orgs"
+      ["repos_url"]=>
+      string(48) "https://api.github.com/users/benoitpointet/repos"
+      ["events_url"]=>
+      string(59) "https://api.github.com/users/benoitpointet/events{/privacy}"
+      ["received_events_url"]=>
+      string(58) "https://api.github.com/users/benoitpointet/received_events"
+      ["type"]=>
+      string(4) "User"
+    }
+    ["labels"]=>
+    array(0) {
+    }
+    ["state"]=>
+    string(4) "open"
+    ["assignee"]=>
+    NULL
+    ["milestone"]=>
+    NULL
+    ["comments"]=>
+    int(2)
+    ["created_at"]=>
+    string(20) "2012-05-27T11:17:51Z"
+    ["updated_at"]=>
+    string(20) "2013-01-27T20:26:13Z"
+    ["closed_at"]=>
+    NULL
+    ["pull_request"]=>
+    array(3) {
+      ["html_url"]=>
+      NULL
+      ["diff_url"]=>
+      NULL
+      ["patch_url"]=>
+      NULL
+    }
+    ["body"]=>
+    string(89) "Would be nice to be able reorder the children blocks of a block directly in the frontend."
+  }
+}

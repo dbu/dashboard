@@ -33,6 +33,15 @@ fos_elastica:
                             _parent:
                                 type: "github_repository"
                                 identifier: id
+                github_issue:
+                    mappings:
+                        user_login:
+                            type: string
+                            index: not_analyzed
+                        repository:
+                            _parent:
+                                type: "github_repository"
+                                identifier: id
 
 framework:
     #esi:             ~

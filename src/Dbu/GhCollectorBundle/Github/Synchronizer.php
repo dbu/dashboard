@@ -8,19 +8,23 @@ class Synchronizer
 {
     /** @var Client */
     private $github;
-    /** @var \Elastica_Type */
+    /** @var \Elastica\Type */
     private $repositoryType;
-    /** @var \Elastica_type */
+    /** @var \Elastica\Type */
     private $pullType;
+    /** @var \Elastica\Type */
+    private $issueType;
 
     public function __construct(
         Client $github,
-        \Elastica_Type $repositoryType,
-        \Elastica_type $pullType
+        \Elastica\Type $repositoryType,
+        \Elastica\Type $pullType,
+        \Elastica\Type $issueType
     ) {
         $this->github = $github;
         $this->repositoryType = $repositoryType;
         $this->pullType = $pullType;
+        $this->issueType = $issueType;
     }
 
     /**
@@ -32,6 +36,8 @@ class Synchronizer
         $user = $this->github->api('user');
         /** @var $pr \Github\Api\PullRequest */
         $prApi = $this->github->api('pull_request');
+        /** @var $issueApi \Github\Api\Issue */
+        $issueApi = $this->github->api('issue');
         /** @var $repo \Github\Api\Organization */
         $org = $this->github->api('organization');
 
@@ -51,39 +57,60 @@ class Synchronizer
             $repository['owner_login'] = $repository['owner']['login'];
             unset($repository['owner']);
 
-            $repository['pulls'] = array();
+            $prDocs = $this->cleanItems($prApi->all($ghaccount, $repository['name']), $repository['id'], 'github_pull');
+            $repository['open_pull_count'] = count($prDocs);
 
-            $pullRequests = $prApi->all($ghaccount, $repository['name']);
-            $repository['open_pull_count'] = count($pullRequests);
-            $repository['open_issues_only'] =
-                isset($repository['open_issue_count'])
-                    ? $repository['open_issue_count'] - count($pullRequests)
-                    : 0;
-            $docs = array();
-
-            foreach($pullRequests as $r) {
-                $r['user_login'] = $r['user']['login'];
-                unset($r['user']);
-                unset($r['assignee']);
-                unset($r['head']);
-                unset($r['base']);
-                $r['_parent'] = $repository['id'];
-                $docs[] = new \Elastica_Document($r['id'], $r, 'github_pull');
+            if ($repository['has_issues']) {
+                // TODO: fetch from jira i.e. for phpcr-odm
+                $issueDocs = $this->cleanItems($issueApi->all($ghaccount, $repository['name']), $repository['id'], 'github_issue', true);
+            } else {
+                $issueDocs = array();
             }
-            if ($docs) {
-                $this->pullType->addDocuments($docs);
+            $repository['open_issues_only'] = count($issueDocs);
+
+            if ($prDocs) {
+                $this->pullType->addDocuments($prDocs);
+            }
+            if ($issueDocs) {
+                $this->issueType->addDocuments($issueDocs);
             }
 
             $this->repositoryType->addDocument(
-                new \Elastica_Document($repository['id'], $repository, 'github_repository')
+                new \Elastica\Document($repository['id'], $repository, 'github_repository')
             );
         }
 
         return true;
     }
 
+    /**
+     * @param array $pullRequests
+     * @param array $repository
+     *
+     * @return \Elastica\Document[]
+     */
+    private function cleanItems($items, $repositoryId, $docType, $skipPr = false)
+    {
+        $docs = array();
+
+        foreach ($items as $r) {
+            if ($skipPr && !empty($r['pull_request']['html_url'])) {
+                continue;
+            }
+            $r['user_login'] = $r['user']['login'];
+            unset($r['user']);
+            $r['assignee_login'] = isset($r['assignee']['login']) ? $r['assignee']['login'] : false;
+            unset($r['assignee']);
+            unset($r['head']);
+            unset($r['base']);
+            $r['_parent'] = $repositoryId;
+            $docs[] = new \Elastica\Document($r['id'], $r, $docType);
+        }
+
+        return $docs;
+    }
+
     private function log($message)
     {
-
     }
 }

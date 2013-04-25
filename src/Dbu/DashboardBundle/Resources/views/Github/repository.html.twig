@@ -9,16 +9,16 @@
         </li>
         <li>
             <a href="#{{ repo.data.owner_login }}_-_{{ repo.data.name }}-issues" data-toggle="tab">
-                Issues (TODO)
+                Issues ({{ issues|length }}/{{ repo.data.open_issues_only }})
             </a>
         </li>
     </ul>
     <div class="tab-content">
         <div id="{{ repo.data.owner_login }}_-_{{ repo.data.name }}-pulls" class="tab-pane active">
-            {% include "DbuDashboardBundle:Github:pulls.html.twig" with {"pulls": pulls} %}
+            {% include "DbuDashboardBundle:Github:issues.html.twig" with {"issues": pulls} %}
         </div>
         <div id="{{ repo.data.owner_login }}_-_{{ repo.data.name }}-issues" class="tab-pane">
-            Not yet
+            {% include "DbuDashboardBundle:Github:issues.html.twig" with {"issues": issues} %}
         </div>
     </div>
 </div>

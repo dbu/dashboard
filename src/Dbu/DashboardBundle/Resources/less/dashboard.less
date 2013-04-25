@@ -4,17 +4,25 @@
   right: 20px;
   input[type=text] {
     margin: 0;
+    height: 15pt;
   }
 }
 #additional-info {
   position: fixed;
   top: 150px;
   right:0px;
+  bottom: 50px;
+  overflow-y: scroll;
   h2 {
     font-size: 12pt;
     line-height: 15pt;
   }
-  .meta {
+  div.meta {
     font-size: 9pt;
+  }
+  div.body {
+    code {
+      white-space: pre-wrap;
+    }
   }
 }

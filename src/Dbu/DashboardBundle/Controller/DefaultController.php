@@ -5,6 +5,7 @@ namespace Dbu\DashboardBundle\Controller;
 use Elastica\Filter\Term;
 use Elastica\Query;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Response;
 
 class DefaultController extends Controller
 {
@@ -29,19 +30,19 @@ class DefaultController extends Controller
         /** @var $index \Elastica\Index */
         $index = $this->get('fos_elastica.index.projects');
         $info = $repository->getData();
-        $pulls = $index->search($this->buildPullsQuery($info['id'], $q));
+        $pulls = $index->search($this->buildIssuesQuery($info['id'], $q, 'github_pull'));
+        $issues = $index->search($this->buildIssuesQuery($info['id'], $q, 'github_issue'));
 
-        // TODO: issues
+        // workaround for missing children query
+        if ($q && ! (count($pulls) || count($issues))) {
+            return new Response();
+        }
 
         return $this->render('DbuDashboardBundle:Github:repository.html.twig', array(
             'repo' => $repository,
             'pulls' => $pulls->getResults(),
+            'issues' => $issues->getResults(),
         ));
-    }
-
-    public function detailsAction($id)
-    {
-        // TODO
     }
 
     private function buildOverviewQuery($q)
@@ -61,16 +62,16 @@ class DefaultController extends Controller
         if ($q) {
             $bool = new \Elastica\Query\Bool();
 
-            $fuzzy = new \Elastica\Query\Fuzzy();
-            $fuzzy->addField('full_name', array('value' => $q));
+            $fuzzy = new \Elastica\Query\Fuzzy('full_name', $q);
             $bool->addShould($fuzzy);
 
-            $fuzzy = new \Elastica\Query\Fuzzy();
-            $fuzzy->addField('description',  array('value' => $q));
+            $fuzzy = new \Elastica\Query\Fuzzy('description', $q);
             $bool->addShould($fuzzy);
 
-            // add some fields from pull requests too
-            $child = new \Elastica\Query\HasChild($this->buildPullsQueryFragment($q), 'github_pull');
+            // add pull requests and issues too
+            $child = new \Elastica\Query\HasChild($this->buildIssuesQueryFragment($q), 'github_pull');
+            $bool->addShould($child);
+            $child = new \Elastica\Query\HasChild($this->buildIssuesQueryFragment($q), 'github_issue');
             $bool->addShould($child);
 
             $query->setQuery($bool);
@@ -81,12 +82,19 @@ class DefaultController extends Controller
         return $query;
     }
 
-    private function buildPullsQuery($repositoryId, $q)
+    /**
+     * Query for github issues or pulls
+     * @param $repositoryId
+     * @param $q
+     * @param string $type
+     * @return Query
+     */
+    private function buildIssuesQuery($repositoryId, $q, $type)
     {
         $query = new Query();
 
         $filterRepository = new \Elastica\Filter\BoolAnd();
-        $filterRepository->addFilter(new \Elastica\Filter\Type('github_pull'));
+        $filterRepository->addFilter(new \Elastica\Filter\Type($type));
         $filterRepository->addFilter(new \Elastica\Filter\Term(array('_parent' => $repositoryId)));
 
         $query->setFilter($filterRepository);
@@ -96,7 +104,7 @@ class DefaultController extends Controller
         $query->setSort(array('id' => array('order' => 'desc')));
 
         if ($q) {
-            $query->setQuery($this->buildPullsQueryFragment($q));
+            $query->setQuery($this->buildIssuesQueryFragment($q));
         } else {
             $query->setQuery(new \Elastica\Query\MatchAll());
         }
@@ -104,14 +112,12 @@ class DefaultController extends Controller
         return $query;
     }
 
-    private function buildPullsQueryFragment($q)
+    private function buildIssuesQueryFragment($q)
     {
         $pullsBool = new \Elastica\Query\Bool();
-        $fuzzy = new \Elastica\Query\Fuzzy();
-        $fuzzy->addField('title',  array('value' => $q));
+        $fuzzy = new \Elastica\Query\Fuzzy('title', $q);
         $pullsBool->addShould($fuzzy);
-        $fuzzy = new \Elastica\Query\Fuzzy();
-        $fuzzy->addField('body',  array('value' => $q));
+        $fuzzy = new \Elastica\Query\Fuzzy('body', $q);
         $pullsBool->addShould($fuzzy);
 
         return $pullsBool;

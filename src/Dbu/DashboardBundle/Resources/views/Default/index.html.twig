@@ -26,8 +26,8 @@
     <script src="{{ asset_url }}"></script>
 {% endjavascripts %}
 <script type="text/javascript">
-    $(".pull-request").mouseover(function() {
-        $("#additional-info").html($(this).next().html());
+    $("a.issue-link").mouseover(function() {
+        $("#additional-info").html($(this).next().next().html());
     });
 </script>
 </body>
