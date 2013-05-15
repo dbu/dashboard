@@ -61,9 +61,9 @@ class Synchronizer
             $repository['open_pull_count'] = count($prDocs);
 
             if ($repository['has_issues']) {
-                // TODO: fetch from jira i.e. for phpcr-odm
                 $issueDocs = $this->cleanItems($issueApi->all($ghaccount, $repository['name']), $repository['id'], 'github_issue', true);
             } else {
+                // TODO: fetch from jira i.e. for phpcr-odm
                 $issueDocs = array();
             }
             $repository['open_issues_only'] = count($issueDocs);
@@ -103,6 +103,10 @@ class Synchronizer
             unset($r['assignee']);
             unset($r['head']);
             unset($r['base']);
+            if ($r['milestone']) {
+                $r['milestone_title'] = $r['milestone']['title'];
+            }
+            unset($r['milestone']);
             $r['_parent'] = $repositoryId;
             $docs[] = new \Elastica\Document($r['id'], $r, $docType);
         }

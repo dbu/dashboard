@@ -5,33 +5,45 @@ namespace Dbu\DashboardBundle\Controller;
 use Elastica\Filter\Term;
 use Elastica\Query;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class DefaultController extends Controller
 {
-    public function indexAction()
+    public function indexAction(Request $request)
     {
-        $q = $this->getRequest()->query->has('q')
-            ? $this->getRequest()->query->get('q')
-            : false;
+        $q = $request->query->has('q')
+            ? $request->query->get('q')
+            : false
+        ;
+        $facets = $request->query->has('facets')
+            ? $request->query->get('facets')
+            : array()
+        ;
+        $maxage = $request->query->has('maxage')
+            ? (int) $request->query->get('maxage')
+            : false
+        ;
 
         /** @var $index \Elastica\Index */
         $index = $this->get('fos_elastica.index.projects');
-        $repositories = $index->search($this->buildOverviewQuery(false));//$q));
+        $repositories = $index->search($this->buildOverviewQuery(false /*$q*/, $facets, $maxage));
 
         return $this->render('DbuDashboardBundle:Default:index.html.twig', array(
             'repositories' => $repositories,
             'q' => $q,
+            'facets' => $facets,
+            'maxage' => $maxage,
         ));
     }
 
-    public function repositoryAction($repository, $q)
+    public function repositoryAction($repository, $q, array $facets, $maxage)
     {
         /** @var $index \Elastica\Index */
         $index = $this->get('fos_elastica.index.projects');
         $info = $repository->getData();
-        $pulls = $index->search($this->buildIssuesQuery($info['id'], $q, 'github_pull'));
-        $issues = $index->search($this->buildIssuesQuery($info['id'], $q, 'github_issue'));
+        $pulls = $index->search($this->buildIssuesQuery($info['id'], $q, $facets, $maxage, 'github_pull'));
+        $issues = $index->search($this->buildIssuesQuery($info['id'], $q, $facets, $maxage, 'github_issue'));
 
         // workaround for missing children query
         if ($q && ! (count($pulls) || count($issues))) {
@@ -45,7 +57,7 @@ class DefaultController extends Controller
         ));
     }
 
-    private function buildOverviewQuery($q)
+    private function buildOverviewQuery($q, array $facets, $maxage)
     {
         $query = new Query();
 
@@ -68,6 +80,15 @@ class DefaultController extends Controller
             $fuzzy = new \Elastica\Query\Fuzzy('description', $q);
             $bool->addShould($fuzzy);
 
+            /*
+             * TODO: add facet on children. can we add this to buildIssuesQueryFragment?
+            if (isset($facets['Milestones'])) {
+
+                $filter->addFilter(new \Elastica\Filter\Terms('milestone_title', $facets['Milestones']));
+            }
+            */
+            // TODO: same about $maxage
+
             // add pull requests and issues too
             $child = new \Elastica\Query\HasChild($this->buildIssuesQueryFragment($q), 'github_pull');
             $bool->addShould($child);
@@ -78,6 +99,15 @@ class DefaultController extends Controller
         } else {
             $query->setQuery(new \Elastica\Query\MatchAll());
         }
+
+        $facet = new \Elastica\Facet\Terms('Milestones');
+        $facet->setField('milestone_title');
+        $facet->setSize(10);
+        $facet->setOrder('reverse_count');
+
+        // Add that facet to the search query object.
+        $query->addFacet($facet);
+
 //echo '<pre>';var_dump($query->toArray());die;
         return $query;
     }
@@ -86,19 +116,28 @@ class DefaultController extends Controller
      * Query for github issues or pulls
      * @param $repositoryId
      * @param $q
+     * @param array $facets list of facet filters to use
      * @param string $type
+     *
      * @return Query
      */
-    private function buildIssuesQuery($repositoryId, $q, $type)
+    private function buildIssuesQuery($repositoryId, $q, array $facets, $maxage, $type)
     {
         $query = new Query();
 
         $filterRepository = new \Elastica\Filter\BoolAnd();
         $filterRepository->addFilter(new \Elastica\Filter\Type($type));
         $filterRepository->addFilter(new \Elastica\Filter\Term(array('_parent' => $repositoryId)));
+        if (isset($facets['Milestones'])) {
+            $filterRepository->addFilter(new \Elastica\Filter\Terms('milestone_title', $facets['Milestones']));
+        }
+        if ($maxage) {
+            //TODO: fix
+            //$filterRepository->addFilter(new \Elastica\Filter\NumericRange('updated_at', array('from' => new \DateTime)));
+        }
 
         $query->setFilter($filterRepository);
-
+//echo '<pre>';var_dump($query->toArray());die;
         $query->setSize(5000);
 
         $query->setSort(array('id' => array('order' => 'desc')));
@@ -114,13 +153,13 @@ class DefaultController extends Controller
 
     private function buildIssuesQueryFragment($q)
     {
-        $pullsBool = new \Elastica\Query\Bool();
+        $issuesBool = new \Elastica\Query\Bool();
         $fuzzy = new \Elastica\Query\Fuzzy('title', $q);
-        $pullsBool->addShould($fuzzy);
+        $issuesBool->addShould($fuzzy);
         $fuzzy = new \Elastica\Query\Fuzzy('body', $q);
-        $pullsBool->addShould($fuzzy);
+        $issuesBool->addShould($fuzzy);
 
-        return $pullsBool;
+        return $issuesBool;
     }
 
     /**

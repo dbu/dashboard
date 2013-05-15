@@ -11,7 +11,13 @@
         <h1 class="accordion-heading accordion-toggle" data-toggle="collapse" href="#{{ lastUser }}-repositories">{{ lastUser }}</h1>
         <div id="{{ lastUser }}-repositories" class="section-repositories accordion-body collapse in">
     {% endif %}
-    {% render controller("DbuDashboardBundle:Default:repository", {"repository": repo, "q": q}) %}
+    {% render controller("DbuDashboardBundle:Default:repository",
+        {"repository": repo,
+         "q": q,
+         "facets": facets,
+         "maxage": maxage
+        })
+    %}
 {% endfor %}
 
     </div>

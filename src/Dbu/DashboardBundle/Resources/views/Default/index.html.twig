@@ -8,13 +8,34 @@
 </head>
 <body>
 <div id="toolbar">
-    <form method="GET"><input type="text" name="q" value="{{ q }}"/><input type="submit" value="search"/></form>
-    TODO: Have some facetting
+    <form method="GET"><input type="text" name="q" value="{{ q }}"/><input type="submit" value="search"/><br/>
+        {% for name, facet in repositories.facets %}
+            {% spaceless %}
+            {{ name }}:
+            {% for term in facet.terms %}
+                {# TODO: keep facet selection #}
+                <input type="checkbox" name="facets[{{ name }}][]" id="facet-{{ name }}-{{ term.term }}" value="{{ term.term }}"/> <label for="facet-{{ name }}-{{ term.term }}">{{ term.term }} ({{ term.count }})</label>
+            {% endfor %}
+            <br/>
+            {%  endspaceless %}
+        {% endfor %}
+        {#
+        {% spaceless %}
+            Age:
+            <input type="checkbox" name="maxage" value="7" id="maxage"
+                {% if maxage %}
+                    checked="true"
+                {% endif %}
+            />
+            <label for="maxage">Last Week</label>
+        {% endspaceless %}
+        #}
+    </form>
 </div>
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span6">
-            {% include "DbuDashboardBundle:Github:repositoryList.html.twig" with {"repositories": repositories, "q": q} %}
+            {% include "DbuDashboardBundle:Github:repositoryList.html.twig" with {"repositories": repositories, "q": q, "facets": facets, "maxage": maxage} %}
         </div>
         <div class="span6" id="additional-info">
             <br/>(Hover over an issue to display information)
