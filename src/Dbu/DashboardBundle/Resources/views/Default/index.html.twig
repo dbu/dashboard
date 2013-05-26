@@ -10,14 +10,12 @@
 <div id="toolbar">
     <form method="GET"><input type="text" name="q" value="{{ q }}"/><input type="submit" value="search"/><br/>
         {% for name, facet in repositories.facets %}
-            {% spaceless %}
             {{ name }}:
             {% for term in facet.terms %}
                 {# TODO: keep facet selection #}
                 <input type="checkbox" name="facets[{{ name }}][]" id="facet-{{ name }}-{{ term.term }}" value="{{ term.term }}"/> <label for="facet-{{ name }}-{{ term.term }}">{{ term.term }} ({{ term.count }})</label>
             {% endfor %}
             <br/>
-            {%  endspaceless %}
         {% endfor %}
         {#
         {% spaceless %}

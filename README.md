@@ -1,14 +1,21 @@
-Ideas
-=====
+This Symfony2 application provides a dashboard that collects information on
+various repositories. This is particularly useful if a project spans multiple
+repositories
 
-* Also count open issues that are no pull requests.
-* Filter to only see new things or only very old (and make definition of "old" configurable).
-  Show the "most important" issues?
-* Gather information about git and show last tag and number of commits since that tag.
-* ...
+Technology
+----------
+
+This application is based on the knplabs github-api and elasticsearch (with the
+FOS elasticabundle).
 
 
-Search
-------
+License
+-------
 
-* Use parent-child thing to only find pull requests that match query.
+The code is licensed under the MIT license. See the LICENSE file.
+
+
+Authors
+-------
+
+David Buchmann <mail@davidbu.ch>
