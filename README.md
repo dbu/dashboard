@@ -14,6 +14,10 @@ License
 
 The code is licensed under the MIT license. See the LICENSE file.
 
+Contributing
+------------
+
+See [CONTRIBUTING.md]
 
 Authors
 -------
