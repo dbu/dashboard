@@ -29,6 +29,9 @@ fos_elastica:
                         user_login:
                             type: string
                             index: not_analyzed
+                        assignee_login:
+                            type: string
+                            index: not_analyzed
                         milestone_title:
                             type: string
                             index: not_analyzed
@@ -41,6 +44,9 @@ fos_elastica:
                 github_issue:
                     mappings:
                         user_login:
+                            type: string
+                            index: not_analyzed
+                        assignee_login:
                             type: string
                             index: not_analyzed
                         milestone_title:

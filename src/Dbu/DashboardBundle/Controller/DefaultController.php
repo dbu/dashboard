@@ -102,10 +102,20 @@ class DefaultController extends Controller
 
         $facet = new \Elastica\Facet\Terms('Milestones');
         $facet->setField('milestone_title');
-        $facet->setSize(10);
-        $facet->setOrder('reverse_count');
+        $facet->setSize(3);
+        $facet->setOrder('count');
+        $query->addFacet($facet);
 
-        // Add that facet to the search query object.
+        $facet = new \Elastica\Facet\Terms('Author');
+        $facet->setField('user_login');
+        $facet->setSize(10);
+        $facet->setOrder('count');
+        $query->addFacet($facet);
+
+        $facet = new \Elastica\Facet\Terms('Assignee');
+        $facet->setField('assignee_login');
+        $facet->setSize(10);
+        $facet->setOrder('count');
         $query->addFacet($facet);
 
 //echo '<pre>';var_dump($query->toArray());die;
@@ -130,6 +140,12 @@ class DefaultController extends Controller
         $filterRepository->addFilter(new \Elastica\Filter\Term(array('_parent' => $repositoryId)));
         if (isset($facets['Milestones'])) {
             $filterRepository->addFilter(new \Elastica\Filter\Terms('milestone_title', $facets['Milestones']));
+        }
+        if (isset($facets['Author'])) {
+            $filterRepository->addFilter(new \Elastica\Filter\Terms('user_login', $facets['Author']));
+        }
+        if (isset($facets['Assignee'])) {
+            $filterRepository->addFilter(new \Elastica\Filter\Terms('assignee_login', $facets['Assignee']));
         }
         if ($maxage) {
             //TODO: fix
