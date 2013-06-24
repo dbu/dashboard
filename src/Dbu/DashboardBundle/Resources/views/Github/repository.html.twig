@@ -3,6 +3,11 @@
 
     <ul class="nav nav-tabs">
         <li class="active">
+            <a href="#{{ repo.data.owner_login }}_-_{{ repo.data.name }}-all" data-toggle="tab">
+                All ({{ pulls|length + issues|length }}/{{ repo.data.open_pull_count + repo.data.open_issues_only }})
+            </a>
+        </li>
+        <li>
             <a href="#{{ repo.data.owner_login }}_-_{{ repo.data.name }}-pulls" data-toggle="tab">
                 Pulls ({{ pulls|length }}/{{ repo.data.open_pull_count }})
             </a>
@@ -14,11 +19,23 @@
         </li>
     </ul>
     <div class="tab-content">
-        <div id="{{ repo.data.owner_login }}_-_{{ repo.data.name }}-pulls" class="tab-pane active">
-            {% include "DbuDashboardBundle:Github:issues.html.twig" with {"issues": pulls} %}
+        <div id="{{ repo.data.owner_login }}_-_{{ repo.data.name }}-all" class="tab-pane active">
+            <div class="pulls">
+                {% include "DbuDashboardBundle:Github:issues.html.twig" with {"issues": pulls} %}
+            </div>
+            <div class="issues">
+                {% include "DbuDashboardBundle:Github:issues.html.twig" with {"issues": issues} %}
+            </div>
+        </div>
+        <div id="{{ repo.data.owner_login }}_-_{{ repo.data.name }}-pulls" class="tab-pane">
+            <div class="pulls">
+               {% include "DbuDashboardBundle:Github:issues.html.twig" with {"issues": pulls} %}
+            </div>
         </div>
         <div id="{{ repo.data.owner_login }}_-_{{ repo.data.name }}-issues" class="tab-pane">
-            {% include "DbuDashboardBundle:Github:issues.html.twig" with {"issues": issues} %}
+            <div class="issues">
+               {% include "DbuDashboardBundle:Github:issues.html.twig" with {"issues": issues} %}
+            </div>
         </div>
     </div>
 </div>
