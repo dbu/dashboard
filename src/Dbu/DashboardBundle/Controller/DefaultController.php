@@ -2,6 +2,8 @@
 
 namespace Dbu\DashboardBundle\Controller;
 
+use Elastica\Filter\Bool;
+use Elastica\Filter\HasParent;
 use Elastica\Filter\Term;
 use Elastica\Query;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -20,30 +22,35 @@ class DefaultController extends Controller
             ? $request->query->get('facets')
             : array()
         ;
-        $maxage = $request->query->has('maxage')
-            ? (int) $request->query->get('maxage')
+        $lastupdated = $request->query->has('lastupdated')
+            ? (int) $request->query->get('lastupdated')
+            : false
+        ;
+        $created = $request->query->has('created')
+            ? (int) $request->query->get('created')
             : false
         ;
 
         /** @var $index \Elastica\Index */
         $index = $this->get('fos_elastica.index.projects');
-        $repositories = $index->search($this->buildOverviewQuery(false /*$q*/, $facets, $maxage));
+        $repositories = $index->search($this->buildOverviewQuery(false /*$q*/, $facets, $lastupdated, $created));
 
         return $this->render('DbuDashboardBundle:Default:index.html.twig', array(
             'repositories' => $repositories,
             'q' => $q,
             'facets' => $facets,
-            'maxage' => $maxage,
+            'lastupdated' => $lastupdated,
+            'created' => $created,
         ));
     }
 
-    public function repositoryAction($repository, $q, array $facets, $maxage)
+    public function repositoryAction($repository, $q, array $facets, $lastupdated, $created)
     {
         /** @var $index \Elastica\Index */
         $index = $this->get('fos_elastica.index.projects');
         $info = $repository->getData();
-        $pulls = $index->search($this->buildIssuesQuery($info['id'], $q, $facets, $maxage, 'github_pull'));
-        $issues = $index->search($this->buildIssuesQuery($info['id'], $q, $facets, $maxage, 'github_issue'));
+        $pulls = $index->search($this->buildIssuesQuery($info['id'], $q, $facets, $lastupdated, $created, 'github_pull'));
+        $issues = $index->search($this->buildIssuesQuery($info['id'], $q, $facets, $lastupdated, $created, 'github_issue'));
 
         // workaround for missing children query
         if ($q && ! (count($pulls) || count($issues))) {
@@ -57,69 +64,69 @@ class DefaultController extends Controller
         ));
     }
 
-    private function buildOverviewQuery($q, array $facets, $maxage)
+    private function buildOverviewQuery($q, array $facets, $lastupdated, $created)
     {
-        $query = new Query();
+        $queryObject = new Query();
 
-        $filterAnd = new \Elastica\Filter\BoolAnd();
-        $filterAnd->addFilter(new \Elastica\Filter\Type('github_repository'));
-        $filterAnd->addFilter($this->buildRepositoryFilter());
+        $queryObject->setSize(5000);
 
-        $query->setFilter($filterAnd);
-
-        $query->setSize(5000);
-
-        $query->setSort(array('owner_login' => array('order' => 'asc')));
+        $queryObject->setSort(array('owner_login' => array('order' => 'asc')));
 
         if ($q) {
-            $bool = new \Elastica\Query\Bool();
+            // either the name, description or one of the children need to match
+            $query = new \Elastica\Query\Bool();
 
             $fuzzy = new \Elastica\Query\Fuzzy('full_name', $q);
-            $bool->addShould($fuzzy);
+            $query->addShould($fuzzy);
 
             $fuzzy = new \Elastica\Query\Fuzzy('description', $q);
-            $bool->addShould($fuzzy);
-
-            /*
-             * TODO: add facet on children. can we add this to buildIssuesQueryFragment?
-            if (isset($facets['Milestones'])) {
-
-                $filter->addFilter(new \Elastica\Filter\Terms('milestone_title', $facets['Milestones']));
-            }
-            */
-            // TODO: same about $maxage
+            $query->addShould($fuzzy);
 
             // add pull requests and issues too
             $child = new \Elastica\Query\HasChild($this->buildIssuesQueryFragment($q), 'github_pull');
-            $bool->addShould($child);
+            $query->addShould($child);
             $child = new \Elastica\Query\HasChild($this->buildIssuesQueryFragment($q), 'github_issue');
-            $bool->addShould($child);
-
-            $query->setQuery($bool);
+            $query->addShould($child);
         } else {
-            $query->setQuery(new \Elastica\Query\MatchAll());
+            $query = new \Elastica\Query\MatchAll();
         }
+
+        $repositoryFilter = $this->buildRepositoryFilter();
+        $parentFilter = new HasParent(
+            new Query\Filtered(new \Elastica\Query\MatchAll(), $repositoryFilter),
+            'github_repository'
+        );
 
         $facet = new \Elastica\Facet\Terms('Milestones');
         $facet->setField('milestone_title');
         $facet->setSize(3);
         $facet->setOrder('count');
-        $query->addFacet($facet);
+        //$facet->setFilter($parentFilter);
+        $queryObject->addFacet($facet);
 
         $facet = new \Elastica\Facet\Terms('Author');
         $facet->setField('user_login');
         $facet->setSize(10);
         $facet->setOrder('count');
-        $query->addFacet($facet);
+        //$facet->setFilter($parentFilter);
+        $queryObject->addFacet($facet);
 
         $facet = new \Elastica\Facet\Terms('Assignee');
         $facet->setField('assignee_login');
         $facet->setSize(10);
         $facet->setOrder('count');
-        $query->addFacet($facet);
+        //$facet->setFilter($parentFilter);
+        $queryObject->addFacet($facet);
 
-//echo '<pre>';var_dump($query->toArray());die;
-        return $query;
+        $filterAnd = new \Elastica\Filter\BoolAnd();
+        $filterAnd->addFilter($repositoryFilter);
+        $filterAnd->addFilter(new \Elastica\Filter\Type('github_repository'));
+
+        $queryObject->setQuery($query);
+        $queryObject->setFilter($filterAnd);
+
+//echo '<pre>';var_dump(json_encode($queryObject->toArray(), 128));die;
+        return $queryObject;
     }
 
     /**
@@ -131,7 +138,7 @@ class DefaultController extends Controller
      *
      * @return Query
      */
-    private function buildIssuesQuery($repositoryId, $q, array $facets, $maxage, $type)
+    private function buildIssuesQuery($repositoryId, $q, array $facets, $lastupdated, $created, $type)
     {
         $query = new Query();
 
@@ -147,9 +154,11 @@ class DefaultController extends Controller
         if (isset($facets['Assignee'])) {
             $filterRepository->addFilter(new \Elastica\Filter\Terms('assignee_login', $facets['Assignee']));
         }
-        if ($maxage) {
-            //TODO: fix
-            //$filterRepository->addFilter(new \Elastica\Filter\NumericRange('updated_at', array('from' => new \DateTime)));
+        if ($lastupdated) {
+            $filterRepository->addFilter(new \Elastica\Filter\NumericRange('updated_at', array('from' => date('Y-m-d', strtotime("{$lastupdated} days ago")))));
+        }
+        if ($created) {
+            $filterRepository->addFilter(new \Elastica\Filter\NumericRange('created_at', array('from' => date('Y-m-d', strtotime("{$created} days ago")))));
         }
 
         $query->setFilter($filterRepository);
@@ -203,18 +212,16 @@ class DefaultController extends Controller
             }
         }
 
-        $and = new \Elastica\Filter\BoolAnd();
-        $and->addFilter(new \Elastica\Filter\Terms('owner_login', $owners));
-        $and->addFilter(new \Elastica\Filter\BoolNot(
-            new \Elastica\Filter\Terms('name', $excludes)
-        ));
+        $bool = new Bool();
+        $bool->addMust(new \Elastica\Filter\Terms('owner_login', $owners));
+        $bool->addMustNot(new \Elastica\Filter\Terms('name', $excludes));
 
         $or = new \Elastica\Filter\BoolOr();
         $or->addFilter(
           new \Elastica\Filter\Terms('full_name', $includes)
         );
-        $or->addFilter($and);
-//echo '<pre>';var_dump($or->toArray());die;
+        $or->addFilter($bool);
+
         return $or;
     }
 
@@ -226,5 +233,10 @@ class DefaultController extends Controller
     private function getRepositories()
     {
         return $this->container->getParameter('repositories');
+    }
+
+    private function debug($thing)
+    {
+        var_dump(json_encode($thing->toArray(), 128));die;
     }
 }

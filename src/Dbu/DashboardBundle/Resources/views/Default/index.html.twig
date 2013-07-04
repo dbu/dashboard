@@ -17,23 +17,17 @@
             {% endfor %}
             <br/>
         {% endfor %}
-        {#
-        {% spaceless %}
-            Age:
-            <input type="checkbox" name="maxage" value="7" id="maxage"
-                {% if maxage %}
-                    checked="true"
-                {% endif %}
-            />
-            <label for="maxage">Last Week</label>
-        {% endspaceless %}
-        #}
+        Created:
+        {% include "DbuDashboardBundle:Default:datefilter.html.twig" with {"type": "created", "value": created} %}
+        <br/>
+        Last Updated:
+        {% include "DbuDashboardBundle:Default:datefilter.html.twig" with {"type": "lastupdated", "value": lastupdated} %}
     </form>
 </div>
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span6">
-            {% include "DbuDashboardBundle:Github:repositoryList.html.twig" with {"repositories": repositories, "q": q, "facets": facets, "maxage": maxage} %}
+            {% include "DbuDashboardBundle:Github:repositoryList.html.twig" with {"repositories": repositories, "q": q, "facets": facets, "lastupdated": lastupdated} %}
         </div>
         <div class="span6" id="additional-info">
             <br/>(Hover over an issue to display information)
