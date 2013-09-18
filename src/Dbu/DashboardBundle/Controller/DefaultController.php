@@ -106,14 +106,14 @@ class DefaultController extends Controller
 
         $facet = new \Elastica\Facet\Terms('Author');
         $facet->setField('user_login');
-        $facet->setSize(10);
+        $facet->setSize(8);
         $facet->setOrder('count');
         //$facet->setFilter($parentFilter);
         $queryObject->addFacet($facet);
 
         $facet = new \Elastica\Facet\Terms('Assignee');
         $facet->setField('assignee_login');
-        $facet->setSize(10);
+        $facet->setSize(8);
         $facet->setOrder('count');
         //$facet->setFilter($parentFilter);
         $queryObject->addFacet($facet);
