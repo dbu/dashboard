@@ -15,7 +15,7 @@
         "knplabs/github-api": "1.2.*@dev",
         "knplabs/knp-markdown-bundle": "1.1.*",
         "ruflin/elastica": "dev-master",
-        "friendsofsymfony/elastica-bundle": "dev-namespace_compat",
+        "friendsofsymfony/elastica-bundle": "dev-master",
         "kriswallsmith/assetic": "1.1.*@alpha",
         "leafo/lessphp": "0.3.*",
         "twitter/bootstrap": "2.3.1",

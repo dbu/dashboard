@@ -2,5 +2,6 @@ web/bundles/
 app/cache/*
 app/logs/*
 vendor/
+components/
 app/config/parameters.yml
 bin/
