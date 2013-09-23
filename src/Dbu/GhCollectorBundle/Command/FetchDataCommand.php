@@ -56,7 +56,8 @@ EOF
         $resetter->resetAllIndexes();
 
         /** @var $synchronizer Synchronizer */
-        $synchronizer = $this->getContainer()->get('dbu_gh_collector.github.synchronizer');
+        //$synchronizer = $this->getContainer()->get('dbu_gh_collector.github.synchronizer');
+        $synchronizer = $this->getContainer()->get('dbu_gh_collector.github.mock_synchronizer');
 
         foreach ($this->getUsers() as $user) {
             $synchronizer->synchronize($user);

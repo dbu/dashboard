@@ -27,6 +27,12 @@
             <argument type="service" id="fos_elastica.index.projects.github_pull" />
             <argument type="service" id="fos_elastica.index.projects.github_issue" />
         </service>
+
+        <service id="dbu_gh_collector.github.mock_synchronizer" class="Dbu\GhCollectorBundle\Github\MockSynchronizer">
+            <argument type="service" id="fos_elastica.index.projects.github_repository" />
+            <argument type="service" id="fos_elastica.index.projects.github_pull" />
+            <argument type="service" id="fos_elastica.index.projects.github_issue" />
+        </service>
     </services>
 
 </container>
