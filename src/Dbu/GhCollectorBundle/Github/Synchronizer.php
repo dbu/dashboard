@@ -107,8 +107,9 @@ class Synchronizer
                 $r['milestone_title'] = $r['milestone']['title'];
             }
             unset($r['milestone']);
-            $r['_parent'] = $repositoryId;
-            $docs[] = new \Elastica\Document($r['id'], $r, $docType);
+            $doc = new \Elastica\Document($r['id'], $r, $docType);
+            $doc->setParent($repositoryId);
+            $docs[] = $doc;
         }
 
         return $docs;
