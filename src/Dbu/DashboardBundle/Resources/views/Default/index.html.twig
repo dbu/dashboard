@@ -1,47 +1,47 @@
 {% set lastUser = '' %}
 <html>
-<head>
-    <title>{{ repositories.count }} Repositories | Dashboard</title>
-    {% stylesheets '@bootstrap_less' '@DbuDashboardBundle/Resources/less/dashboard.less' combine=true %}
-        <link href="{{ asset_url }}" type="text/css" rel="stylesheet" />
-    {% endstylesheets %}
-</head>
-<body>
-<div id="toolbar">
-    <form method="GET"><input type="text" name="q" value="{{ q }}"/><input type="submit" value="search"/><br/>
-        {% for name, facet in repositories.facets %}
-            {{ name }}:
-            {% for term in facet.terms %}
-                {# TODO: keep facet selection #}
-                <input type="checkbox" name="facets[{{ name }}][]" id="facet-{{ name }}-{{ term.term }}" value="{{ term.term }}"/> <label for="facet-{{ name }}-{{ term.term }}">{{ term.term }} ({{ term.count }})</label>
-            {% endfor %}
-            <br/>
-        {% endfor %}
-        Created:
-        {% include "DbuDashboardBundle:Default:datefilter.html.twig" with {"type": "created", "value": created} %}
-        <br/>
-        Last Updated:
-        {% include "DbuDashboardBundle:Default:datefilter.html.twig" with {"type": "lastupdated", "value": lastupdated} %}
-    </form>
-</div>
-<div class="container-fluid">
-    <div class="row-fluid">
-        <div class="span6">
-            {% include "DbuDashboardBundle:Github:repositoryList.html.twig" with {"repositories": repositories, "q": q, "facets": facets, "lastupdated": lastupdated} %}
+    <head>
+        <title>{{ repositories.count }} Repositories | Dashboard</title>
+        {% stylesheets '@bootstrap_less' '@DbuDashboardBundle/Resources/less/dashboard.less' combine=true %}
+            <link href="{{ asset_url }}" type="text/css" rel="stylesheet" />
+        {% endstylesheets %}
+    </head>
+    <body>
+        <div id="toolbar">
+            <form method="GET"><input type="text" name="q" value="{{ q }}"/><input type="submit" value="search"/><br/>
+                {% for name, facet in repositories.facets %}
+                    {{ name }}:
+                    {% for term in facet.terms %}
+                        {# TODO: keep facet selection #}
+                        <input type="checkbox" name="facets[{{ name }}][]" id="facet-{{ name }}-{{ term.term }}" value="{{ term.term }}"/> <label for="facet-{{ name }}-{{ term.term }}">{{ term.term }} ({{ term.count }})</label>
+                    {% endfor %}
+                    <br/>
+                {% endfor %}
+                Created:
+                {% include "DbuDashboardBundle:Default:datefilter.html.twig" with {"type": "created", "value": created} %}
+                <br/>
+                Last Updated:
+                {% include "DbuDashboardBundle:Default:datefilter.html.twig" with {"type": "lastupdated", "value": lastupdated} %}
+            </form>
         </div>
-        <div class="span6" id="additional-info">
-            <br/>(Hover over an issue to display information)
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span6">
+                    {% include "DbuDashboardBundle:Github:repositoryList.html.twig" with {"repositories": repositories, "q": q, "facets": facets, "lastupdated": lastupdated} %}
+                </div>
+                <div class="span6" id="additional-info">
+                    <br/>(Hover over an issue to display information)
+                </div>
+            </div>
         </div>
-    </div>
-</div>
 
-{% javascripts '@jquery_js' '@bootstrap_js' combine=true %}
-    <script src="{{ asset_url }}"></script>
-{% endjavascripts %}
-<script type="text/javascript">
-    $("a.issue-link").mouseover(function() {
-        $("#additional-info").html($(this).next().next().html());
-    });
-</script>
-</body>
+        {% javascripts '@jquery_js' '@bootstrap_js' combine=true %}
+            <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        <script type="text/javascript">
+            $("a.issue-link").mouseover(function() {
+                $("#additional-info").html($(this).next().next().html());
+            });
+        </script>
+    </body>
 </html>

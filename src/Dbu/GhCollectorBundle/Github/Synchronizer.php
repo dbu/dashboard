@@ -28,7 +28,8 @@ class Synchronizer
     }
 
     /**
-     * @param string $ghaccount github account name (user or organization)
+     * @param  string  $ghaccount github account name (user or organization)
+     * @return Boolean
      */
     public function synchronize($ghaccount)
     {
@@ -45,6 +46,7 @@ class Synchronizer
             $repositories = $user->repositories($ghaccount);
         } catch (\Github\Exception\RuntimeException $e) {
             $this->log("<error>User '$ghaccount' not found</error>");
+
             return false;
         }
         try {
@@ -53,7 +55,7 @@ class Synchronizer
             // we don't care, was probably just a normal user
         }
 
-        foreach($repositories as $repository) {
+        foreach ($repositories as $repository) {
             $repository['owner_login'] = $repository['owner']['login'];
             unset($repository['owner']);
 
@@ -84,8 +86,10 @@ class Synchronizer
     }
 
     /**
-     * @param array $pullRequests
-     * @param array $repository
+     * @param $items
+     * @param $repositoryId
+     * @param $docType
+     * @param Boolean $skipPr
      *
      * @return \Elastica\Document[]
      */

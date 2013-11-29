@@ -16,11 +16,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-
 use FOS\ElasticaBundle\Resetter;
-
 use Dbu\GhCollectorBundle\Github\Synchronizer;
-
 
 /**
  * @license GPL

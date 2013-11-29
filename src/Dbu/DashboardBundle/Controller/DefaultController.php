@@ -4,7 +4,6 @@ namespace Dbu\DashboardBundle\Controller;
 
 use Elastica\Filter\Bool;
 use Elastica\Filter\HasParent;
-use Elastica\Filter\Term;
 use Elastica\Query;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -125,7 +124,6 @@ class DefaultController extends Controller
         $queryObject->setQuery($query);
         $queryObject->setFilter($filterAnd);
 
-//echo '<pre>';var_dump(json_encode($queryObject->toArray(), 128));die;
         return $queryObject;
     }
 
@@ -134,6 +132,8 @@ class DefaultController extends Controller
      * @param $repositoryId
      * @param $q
      * @param array $facets list of facet filters to use
+     * @param $lastupdated
+     * @param $created
      * @param string $type
      *
      * @return Query
@@ -162,7 +162,7 @@ class DefaultController extends Controller
         }
 
         $query->setFilter($filterRepository);
-//echo '<pre>';var_dump($query->toArray());die;
+
         $query->setSize(5000);
 
         $query->setSort(array('id' => array('order' => 'desc')));
@@ -233,10 +233,5 @@ class DefaultController extends Controller
     private function getRepositories()
     {
         return $this->container->getParameter('repositories');
-    }
-
-    private function debug($thing)
-    {
-        var_dump(json_encode($thing->toArray(), 128));die;
     }
 }

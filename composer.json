@@ -1,6 +1,6 @@
 {
-    "name": "symfony/framework-standard-edition",
-    "description": "The \"Symfony Standard Edition\" distribution",
+    "name": "dbu/dashboard",
+    "description": "dashboard application to monitor github activity",
     "autoload": {
         "psr-0": { "": "src/" }
     },
@@ -19,16 +19,22 @@
         "kriswallsmith/assetic": "1.1.*@alpha",
         "leafo/lessphp": "0.3.*",
         "twitter/bootstrap": "2.3.1",
-        "components/jquery": "1.9.*"
+        "components/jquery": "1.9.*",
+        "incenteev/composer-parameter-handler": "~2.0"
+    },
+    "require-dev": {
+        "raulfraile/ladybug-bundle": "~1.0"
     },
     "scripts": {
         "post-install-cmd": [
+            "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile"
         ],
         "post-update-cmd": [
+            "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
@@ -39,6 +45,10 @@
         "bin-dir": "bin"
     },
     "extra": {
+        "incenteev-parameters": {
+            "file": "app/config/parameters.yml",
+            "keep-outdated": true
+        },
         "symfony-app-dir": "app",
         "symfony-web-dir": "web",
         "symfony-assets-install": "symlink",
