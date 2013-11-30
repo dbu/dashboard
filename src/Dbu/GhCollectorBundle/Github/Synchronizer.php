@@ -35,12 +35,16 @@ class Synchronizer
     {
         /** @var $user \Github\Api\User */
         $user = $this->github->api('user');
-        /** @var $pr \Github\Api\PullRequest */
+        /** @var $prApi \Github\Api\PullRequest */
         $prApi = $this->github->api('pull_request');
         /** @var $issueApi \Github\Api\Issue */
         $issueApi = $this->github->api('issue');
-        /** @var $repo \Github\Api\Organization */
+        /** @var $org \Github\Api\Organization */
         $org = $this->github->api('organization');
+        /** @var $repoApi \Github\Api\Repo */
+        $repoApi = $this->github->api('repo');
+        /** @var $gitDataApi \Github\Api\GitData */
+        $gitDataApi = $this->github->api('git_data');
 
         try {
             $repositories = $user->repositories($ghaccount);
@@ -76,6 +80,11 @@ class Synchronizer
             if ($issueDocs) {
                 $this->issueType->addDocuments($issueDocs);
             }
+
+            // fetch details on repository
+            $tags = $repoApi->tags($ghaccount, $repository['name']);
+
+            $repository['last_tag'] = isset($tags[0]) ? $tags[0] : array();
 
             $this->repositoryType->addDocument(
                 new \Elastica\Document($repository['id'], $repository, 'github_repository')
