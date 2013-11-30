@@ -11,11 +11,13 @@
 
 namespace Dbu\GhCollectorBundle\Command;
 
-use FOS\ElasticaBundle\Resetter;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+
+use FOS\ElasticaBundle\Resetter;
 
 use Dbu\GhCollectorBundle\Github\Synchronizer;
 
@@ -23,7 +25,7 @@ use Dbu\GhCollectorBundle\Github\Synchronizer;
 /**
  * @license GPL
  */
-class FetchDataCommand extends ContainerAwareCommand
+class DashboardSynchronizeCommand extends ContainerAwareCommand
 {
     /**
      * @see Command
@@ -31,11 +33,12 @@ class FetchDataCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('github:fetch')
-            ->addArgument('repository', InputArgument::IS_ARRAY, 'user or user/repository')
-            ->setDescription('A command to query data from github')
+            ->setName('dashboard:synchronize')
+            ->addArgument('repository', InputArgument::IS_ARRAY, 'user (or organisation) or user/repository')
+            ->addOption('update', 'u', InputOption::VALUE_NONE, 'Update instead of rebuild the index')
+            ->setDescription('Synchronize github repositories into elasticsearch')
             ->setHelp(<<<EOF
-The command <info>%command.name%</info> fetches information about open pull requests from github:
+The command <info>%command.name%</info> fetches information about open issues and pull requests from github:
 
   <info>php %command.full_name% phpcr/phpcr-utils doctrine/phpcr-odm</info>
 
@@ -50,10 +53,13 @@ EOF
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        // TODO: dev...
-        /** @var $resetter Resetter */
-        $resetter = $this->getContainer()->get('fos_elastica.resetter');
-        $resetter->resetAllIndexes();
+        if (!$input->getOption('update')) {
+            /** @var $resetter Resetter */
+            $resetter = $this->getContainer()->get('fos_elastica.resetter');
+            $resetter->resetAllIndexes();
+        } else {
+            throw new \Exception('Sorry, updating the index is not implemented yet - see https://github.com/dbu/dashboard/issues/6');
+        }
 
         /** @var $synchronizer Synchronizer */
         $synchronizer = $this->getContainer()->get('dbu_gh_collector.github.synchronizer');
