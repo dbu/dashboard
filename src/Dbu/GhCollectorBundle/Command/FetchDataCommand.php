@@ -41,12 +41,10 @@ EOF
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $container = $this->getContainer();
-        $this->username = $container->getParameter('github.username');
-        $this->password = $container->getParameter('github.password');
         $this->repositories = $container->getParameter('repositories');
 
         $this->configureStyles($output);
-        $client = $this->getClient();
+        $client = $container->get('dbu_gh_collector.github.client');
 
         $users = $this->getUserRepositories($input);
 
@@ -87,12 +85,11 @@ EOF
             }
 
             foreach($repositories as $repository) {
-
                 if ($repository['fork']) {
                     continue;
                 }
                 $pullRequests = $prApi->all($userName, $repository['name']);
-                if (! count($pullRequests)) {
+                if (!count($pullRequests)) {
                     continue;
                 }
                 $output->write(sprintf('<title>%s</title>', $repository['name']));
@@ -125,7 +122,7 @@ EOF
     private function getUserRepositories(InputInterface $input)
     {
         $users = array();
-        if (! count($input->getArgument('repository'))) {
+        if (!count($input->getArgument('repository'))) {
             return $this->repositories;
         }
 
@@ -142,17 +139,6 @@ EOF
         }
 
         return $users;
-    }
-
-    private function getClient()
-    {
-        $client = new Client;
-        $client->authenticate(
-            $this->username,
-            $this->password,
-            Client::AUTH_HTTP_PASSWORD
-        );
-        return $client;
     }
 
     private function configureStyles(OutputInterface $output)

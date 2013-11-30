@@ -66,13 +66,11 @@ class DefaultController extends Controller
     private function buildOverviewQuery($q, array $facets, $lastupdated, $created)
     {
         $queryObject = new Query();
-
         $queryObject->setSize(5000);
-
         $queryObject->setSort(array('owner_login' => array('order' => 'asc')));
 
         if ($q) {
-            // either the name, description or one of the children need to match
+            // either the name, description or one of the children needs to match
             $query = new \Elastica\Query\Bool();
 
             $fuzzy = new \Elastica\Query\Fuzzy('full_name', $q);
@@ -162,9 +160,7 @@ class DefaultController extends Controller
         }
 
         $query->setFilter($filterRepository);
-
         $query->setSize(5000);
-
         $query->setSort(array('id' => array('order' => 'desc')));
 
         if ($q) {
