@@ -19,9 +19,6 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use FOS\ElasticaBundle\Resetter;
 use Dbu\GhCollectorBundle\Github\Synchronizer;
 
-/**
- * @license GPL
- */
 class DashboardSynchronizeCommand extends ContainerAwareCommand
 {
     /**
