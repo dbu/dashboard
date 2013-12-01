@@ -2,28 +2,28 @@
 
 namespace Dbu\GhCollectorBundle\Command;
 
-use Github\Client;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 
-class FetchDataCommand extends ContainerAwareCommand
+/**
+ * Command to dump github information on the command line.
+ *
+ * @author David Buchmann <mail@davidbu.ch>
+ */
+class DumpCommand extends ContainerAwareCommand
 {
-    private $username;
-    private $password;
-    private $repositories;
-
     /**
-     * @see Command
+     * {@inheritDoc}
      */
     protected function configure()
     {
         $this
-            ->setName('github:fetch')
+            ->setName('dbu:dump')
             ->addArgument('repository', InputArgument::IS_ARRAY, 'user or user/repository')
-            ->setDescription('A command to query data from github')
+            ->setDescription('A command to dump github repository information on the command line')
             ->setHelp(<<<EOF
 The command <info>%command.name%</info> fetches information about open pull requests from github:
 
@@ -36,14 +36,16 @@ EOF
     }
 
     /**
-     * @see Command
+     * {@inheritDoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $container = $this->getContainer();
-        $this->repositories = $container->getParameter('repositories');
 
         $this->configureStyles($output);
+
+        // TODO: we should refactor the Github\Synchronizer so we can make it output text too
+        // below is currently a lot of duplication
         $client = $container->get('dbu_gh_collector.github.client');
 
         $users = $this->getUserRepositories($input);
@@ -123,7 +125,7 @@ EOF
     {
         $users = array();
         if (!count($input->getArgument('repository'))) {
-            return $this->repositories;
+            return $this->getContainer()->getParameter('repositories');
         }
 
         foreach ($input->getArgument('repository') as $argument) {
