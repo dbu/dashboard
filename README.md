@@ -36,8 +36,7 @@ To populate the index, run the synchronize command:
 This should populate elasticsearch. Now you can go to the home of your site to
 see things.
 
-Console Issue Dumper
-....................
+### Console Issue Dumper
 
 There is also a command to see open pull requests on the commandline, with date
 of last change. Run
