@@ -5,3 +5,7 @@ vendor/
 components/
 app/config/parameters.yml
 bin/
+/web/js
+/web/css
+/web/assetic
+/web/bundles
