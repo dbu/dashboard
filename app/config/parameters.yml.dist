@@ -13,3 +13,11 @@ parameters:
         jackalope:
             exclude:
                 - jackalope-mongodb
+
+    status_images:
+        downloads:
+            img_prefix: https://secure.travis-ci.org/
+            img_postfix: .png
+            caption: Build Status
+            link_prefix: http://travis-ci.org/
+            link_postfix: ~
