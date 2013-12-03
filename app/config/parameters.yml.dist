@@ -16,9 +16,19 @@ parameters:
 
     status_badges:
         travis_build_status:
+            caption: Travis Build Status
             img: "https://secure.travis-ci.org/#repo_name#.png"
             link: "http://travis-ci.org/#repo_name#"
-            caption: Travis Build Status
+
+        pugx_stable_status:
+            caption: Latest Stable Version
+            img: "https://poser.pugx.org/#repo_name#/version.png"
+            link: "https://packagist.org/packages/#repo_name#"
+
+        pugx_stable_downloads:
+            caption: Total Downloads
+            img: "https://poser.pugx.org/#repo_name#/d/total.png"
+            link: "https://packagist.org/packages/#repo_name#"
 
         #other_build_status:
         #    img: "https://secure.other-ci.org/#repo_name#.png"
