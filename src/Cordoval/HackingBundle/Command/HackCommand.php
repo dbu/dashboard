@@ -28,16 +28,14 @@ class HackingCommand extends ContainerAwareCommand
         $branchName = $input->getArgument('branchName');
         $issueNumber = $input->getArgument('issueNumber');
         $username = $this->getContainer()->getParameter('github.username');
-
+        $randomName = uniqid().'.php';
         $commands = array(
             "mkdir -p clones/$repoName-$branchName; cd clones/$repoName-$branchName",
             "git clone git@github.com:$repoName .; git remote update;",
             "git checkout $shaOrTag",
             "git checkout -b $branchName",
             "composer install",
-            "phpunit",
-            // create random file
-            // git ca file
+            "touch $randomName",
             "git add .; git commit -am \"starting work on #$issueNumber\"",
             "hub fork",
             "git push -u $username $branchName",
