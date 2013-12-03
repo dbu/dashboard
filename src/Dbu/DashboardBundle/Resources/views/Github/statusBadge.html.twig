@@ -1,3 +1,4 @@
-<a href="http://travis-ci.org/{{ repo_name }}" target="_blank" title="Build Status">
-    <img src="https://secure.travis-ci.org/{{ repo_name }}.png" alt="Build Status">
+{% set travis = status_badges.travis_build_status %}
+<a href="{{ travis.link|replace({'#repo_name#': repo_name }) }}" target="_blank" title="{{ travis.caption }}">
+    <img src="{{ travis.img|replace({'#repo_name#': repo_name }) }}" alt="{{ travis.caption }}">
 </a>

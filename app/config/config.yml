@@ -1,6 +1,7 @@
 imports:
     - { resource: parameters.yml }
     - { resource: security.yml }
+    - { resource: twig.yml }
 
 fos_elastica:
     clients:
@@ -75,11 +76,6 @@ framework:
     trusted_proxies: ~
     session:         ~
     fragments:       ~
-
-# Twig Configuration
-twig:
-    debug:            %kernel.debug%
-    strict_variables: %kernel.debug%
 
 # Assetic Configuration
 assetic:

@@ -14,10 +14,13 @@ parameters:
             exclude:
                 - jackalope-mongodb
 
-    status_images:
-        downloads:
-            img_prefix: https://secure.travis-ci.org/
-            img_postfix: .png
-            caption: Build Status
-            link_prefix: http://travis-ci.org/
-            link_postfix: ~
+    status_badges:
+        travis_build_status:
+            img: "https://secure.travis-ci.org/#repo_name#.png"
+            link: "http://travis-ci.org/#repo_name#"
+            caption: Travis Build Status
+
+        #other_build_status:
+        #    img: "https://secure.other-ci.org/#repo_name#.png"
+        #    link: "http://other-ci.org/#repo_name#"
+        #    caption: Other Build Status
