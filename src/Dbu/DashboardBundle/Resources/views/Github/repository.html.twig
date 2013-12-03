@@ -2,6 +2,7 @@
     <h2>{{ repo.data.name }}</h2>
     <span>{{ repo.last_tag.name }}</span>
 
+    {% include "DbuDashboardBundle:Github:statusBadge.html.twig" with {"repo_name": repo.data.name} %}
     <ul class="nav nav-tabs">
         <li class="active">
             <a href="#{{ repo.data.owner_login }}_-_{{ repo.data.name }}-all" data-toggle="tab">
