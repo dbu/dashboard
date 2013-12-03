@@ -57,13 +57,13 @@ EOF
         /** @var $repo \Github\Api\Repo */
         $repo = $client->api('repo');
 
-        foreach($users as $userName => $data) {
+        foreach ($users as $userName => $data) {
             if (is_array($data) && isset($data['include'])) {
                 $repositories = array();
                 foreach ($data['include'] as $repoName) {
                     try {
                         $repositories[] = $repo->show($userName, $repoName);
-                    } catch(\Github\Exception\RuntimeException $e) {
+                    } catch (\Github\Exception\RuntimeException $e) {
                         $output->writeln("<error>No user '$userName' or no repository '$repoName'</error>");
                     }
                 }
@@ -86,7 +86,7 @@ EOF
                 }
             }
 
-            foreach($repositories as $repository) {
+            foreach ($repositories as $repository) {
                 if ($repository['fork']) {
                     continue;
                 }
@@ -101,7 +101,7 @@ EOF
                 $output->writeln(sprintf(' - %s open PR', count($pullRequests)));
                 $output->writeln('');
 
-                foreach($pullRequests as $r) {
+                foreach ($pullRequests as $r) {
                     $output->writeln(sprintf('  <subtitle>#%s %s</subtitle> (%s)', $r['number'], $r['title'], $r['user']['login']));
                     $created = strtotime($r['created_at']);
                     $updated = strtotime($r['updated_at']);
