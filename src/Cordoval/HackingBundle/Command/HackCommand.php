@@ -6,9 +6,14 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\ProcessBuilder;
 
-class HackingCommand extends ContainerAwareCommand
+class HackCommand extends ContainerAwareCommand
 {
+    protected $workingDir;
+
     protected function configure()
     {
         $this
@@ -23,22 +28,56 @@ class HackingCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $appDir = $this->getContainer()->get('kernel')->getRootDir();
         $repoName = $input->getArgument('repoName');
         $shaOrTag = $input->getArgument('shaOrTag');
         $branchName = $input->getArgument('branchName');
         $issueNumber = $input->getArgument('issueNumber');
         $username = $this->getContainer()->getParameter('github.username');
         $randomName = uniqid().'.php';
+
+        $fs = new Filesystem();
+        $urlizedName = str_replace('/', '-', $repoName);
+        $fs->mkdir("clones/$urlizedName-$branchName");
+        $this->workingDir = $appDir."/../clones/$urlizedName-$branchName";
+
         $commands = array(
-            "mkdir -p clones/$repoName-$branchName; cd clones/$repoName-$branchName",
-            "git clone git@github.com:$repoName .; git remote update;",
-            "git checkout $shaOrTag",
-            "git checkout -b $branchName",
-            "composer install",
-            "touch $randomName",
-            "git add .; git commit -am \"starting work on #$issueNumber\"",
-            "hub fork",
-            "git push -u $username $branchName",
+            array("git", "clone", "git@github.com:$repoName", "."),
+            array("git", "remote", "update"),
+            array("git", "checkout", "$shaOrTag"),
+            array("git", "checkout", "-b", "$branchName"),
+            array("composer", "install"),
+            array("touch", "$randomName"),
+            array("git", "add", "."),
+            array("git", "commit", "-am", "\"starting work on #$issueNumber\""),
+            array("hub", "fork"),
+            array("git", "push", "-u", "$username", "$branchName"),
         );
+
+        foreach ($commands as $command) {
+            $this->runItem($command);
+        }
+    }
+
+    protected function runItem(array $command)
+    {
+        $builder = new ProcessBuilder($command);
+        $builder
+            ->setWorkingDirectory($this->workingDir)
+            ->setTimeout(3600)
+        ;
+        $process = $builder->getProcess();
+        $process->run(function ($type, $buffer) {
+                if (Process::ERR === $type) {
+                    echo 'ERR > ' . $buffer;
+                } else {
+                    echo 'OUT > ' . $buffer;
+                }
+            }
+        );
+
+        if (!$process->isSuccessful()) {
+            throw new \RuntimeException($process->getErrorOutput());
+        }
     }
 }
