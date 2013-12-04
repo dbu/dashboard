@@ -29,7 +29,7 @@ class HackCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $appDir = $this->getContainer()->get('kernel')->getRootDir();
-        $repoName = $input->getArgument('repoName');
+        $repoFullName = $input->getArgument('repoName');
         $shaOrTag = $input->getArgument('shaOrTag');
         $branchName = $input->getArgument('branchName');
         $issueNumber = $input->getArgument('issueNumber');
@@ -37,12 +37,13 @@ class HackCommand extends ContainerAwareCommand
         $randomName = uniqid().'.php';
 
         $fs = new Filesystem();
-        $urlizedName = str_replace('/', '-', $repoName);
+        $urlizedName = str_replace('/', '-', $repoFullName);
+        list(, $repoName) = explode('/', $repoFullName);
         $fs->mkdir("clones/$urlizedName-$branchName");
         $this->workingDir = $appDir."/../clones/$urlizedName-$branchName";
 
         $commands = array(
-            array("git", "clone", "git@github.com:$repoName", "."),
+            array("git", "clone", "git@github.com:$repoFullName", "."),
             array("git", "remote", "update"),
             array("git", "checkout", "$shaOrTag"),
             array("git", "checkout", "-b", "$branchName"),
@@ -50,7 +51,7 @@ class HackCommand extends ContainerAwareCommand
             array("touch", "$randomName"),
             array("git", "add", "."),
             array("git", "commit", "-am", "\"starting work on #$issueNumber\""),
-            array("hub", "fork"),
+            array("git", "remote", "add", "$username", "git@github.com:$username/$repoName.git"),
             array("git", "push", "-u", "$username", "$branchName"),
         );
 
