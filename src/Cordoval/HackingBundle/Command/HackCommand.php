@@ -38,7 +38,7 @@ class HackCommand extends ContainerAwareCommand
 
         $fs = new Filesystem();
         $urlizedName = str_replace('/', '-', $repoFullName);
-        list(, $repoName) = explode('/', $repoFullName);
+        list($rootRepo, $repoName) = explode('/', $repoFullName);
         $fs->mkdir("clones/$urlizedName-$branchName");
         $this->workingDir = $appDir."/../clones/$urlizedName-$branchName";
 
@@ -51,9 +51,13 @@ class HackCommand extends ContainerAwareCommand
             array("touch", "$randomName"),
             array("git", "add", "."),
             array("git", "commit", "-am", "\"starting work on #$issueNumber\""),
-            array("git", "remote", "add", "$username", "git@github.com:$username/$repoName.git"),
-            array("git", "push", "-u", "$username", "$branchName"),
         );
+
+        if ($rootRepo != $username) {
+            $commands[] = array("git", "remote", "add", "$username", "git@github.com:$username/$repoName.git");
+        }
+
+        $commands[] = array("git", "push", "-u", "$username", "$branchName");
 
         foreach ($commands as $command) {
             $this->runItem($command);
