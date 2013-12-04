@@ -71,7 +71,6 @@ EOF
             : $this->getOrganizations()
         ;
 
-
         foreach ($organizations as $organization) {
             $synchronizer->synchronize($organization);
         }
