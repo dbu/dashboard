@@ -3,6 +3,7 @@
 namespace Dbu\GhCollectorBundle\Github;
 
 use Github\Client;
+use Github\ResultPager;
 
 class Synchronizer
 {
@@ -14,6 +15,7 @@ class Synchronizer
     private $pullType;
     /** @var \Elastica\Type */
     private $issueType;
+    private $paginator;
 
     public function __construct(
         Client $github,
@@ -22,6 +24,7 @@ class Synchronizer
         \Elastica\Type $issueType
     ) {
         $this->github = $github;
+        $this->paginator = new ResultPager($this->github);
         $this->repositoryType = $repositoryType;
         $this->pullType = $pullType;
         $this->issueType = $issueType;
@@ -46,15 +49,16 @@ class Synchronizer
         /** @var $gitDataApi \Github\Api\GitData */
         $gitDataApi = $this->github->api('git_data');
 
+
         try {
-            $repositories = $user->repositories($ghaccount);
+            $repositories = $this->paginator->fetchAll($user, 'repositories', array($ghaccount));
         } catch (\Github\Exception\RuntimeException $e) {
             $this->log("<error>User '$ghaccount' not found</error>");
 
             return false;
         }
         try {
-            $repositories = array_merge($repositories, $org->repositories($ghaccount));
+            $repositories = array_merge($repositories, $this->paginator->fetchAll($org, 'repositories', array($ghaccount)));
         } catch (\Github\Exception\RuntimeException $e) {
             // we don't care, was probably just a normal user
         }
@@ -63,11 +67,20 @@ class Synchronizer
             $repository['owner_login'] = $repository['owner']['login'];
             unset($repository['owner']);
 
-            $prDocs = $this->cleanItems($prApi->all($ghaccount, $repository['name']), $repository['id'], 'github_pull');
+            $prDocs = $this->cleanItems(
+                $this->paginator->fetchAll($prApi, 'all', array($ghaccount, $repository['name'])),
+                $repository['id'],
+                'github_pull'
+            );
             $repository['open_pull_count'] = count($prDocs);
 
             if ($repository['has_issues']) {
-                $issueDocs = $this->cleanItems($issueApi->all($ghaccount, $repository['name']), $repository['id'], 'github_issue', true);
+                $issueDocs = $this->cleanItems(
+                    $this->paginator->fetchAll($issueApi, 'all', array($ghaccount, $repository['name'])),
+                    $repository['id'],
+                    'github_issue',
+                    true
+                );
             } else {
                 // TODO: fetch from jira i.e. for phpcr-odm
                 $issueDocs = array();
