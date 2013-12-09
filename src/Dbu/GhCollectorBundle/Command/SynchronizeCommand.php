@@ -40,7 +40,7 @@ class SynchronizeCommand extends ContainerAwareCommand
             ->setHelp(<<<EOF
 The command <info>%command.name%</info> fetches information about open issues and pull requests from github:
 
-  <info>php %command.full_name%/info>
+  <info>php %command.full_name%</info>
 
 EOF
 /* Note: Listing organizations that are not configured will lead to them being in the search index
