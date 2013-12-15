@@ -14,14 +14,15 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Dbu\GhCollectorBundle\Github\Plugin\HackingdayPlugin;
 
-class BotCommand extends Command
+class IrcCommand extends Command
 {
     protected function configure()
     {
-        $this->setName('symfonycon:bot:run')
-            ->setDescription('Starts the bot')
-            ->addOption('nickname', null, InputOption::VALUE_REQUIRED, 'Who do you want to be?', 'SymfonyConBot')
-            ->addArgument('channels', InputArgument::IS_ARRAY, 'List of channels to join', array('symfony'));
+        $this->setName('dbu:irc')
+            ->setDescription('Starts the bot on irc')
+            ->addOption('nickname', null, InputOption::VALUE_REQUIRED, 'Who do you want to be?', 'HackingDayBot')
+            ->addArgument('channels', InputArgument::IS_ARRAY, 'List of channels to join', array('symfony-hackingday'))
+        ;
     }
 
     /**
@@ -84,7 +85,7 @@ class BotCommand extends Command
     private function getPlugins()
     {
         $hackingdayPlugin = new HackingdayPlugin();
-
+        new \SplObjectStorage();
         return array(
             new PingPongPlugin(),
             $hackingdayPlugin,

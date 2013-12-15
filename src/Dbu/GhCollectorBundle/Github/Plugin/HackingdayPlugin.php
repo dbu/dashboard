@@ -9,7 +9,9 @@ class HackingdayPlugin implements PluginInterface
 {
     const TRIGGER_PATTERN = '/\b(issue)\b/';
 
-    public function __construct()
+    public function __construct(
+
+    )
     {
 
     }
@@ -32,9 +34,12 @@ class HackingdayPlugin implements PluginInterface
         $message = $event->getMessage();
         $matches = array();
 
-
+        $table =
         $responseMessage = '10 top github issues with links:';
-        $responseMessage .= ;
+        foreach ($this->fetcher->getIssues() as $issue) {
+            $table->addRow($issue);
+        }
+
 
         if ($message->isInChannel() && $message->matchText(self::TRIGGER_PATTERN, $matches)) {
             $event
