@@ -6,14 +6,15 @@ use Dbu\DashboardBundle\Model\BufferedOutput;
 use Dbu\DashboardBundle\Model\Question;
 use Dbu\DashboardBundle\Model\Questionary;
 use Dbu\DashboardBundle\Model\SymfonyQuestionary;
-use Symfony\Component\Console\Command\Command;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Helper\DialogHelper;
 use Symfony\Component\Console\Helper\TableHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Output\StreamOutput;
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\ProcessBuilder;
 
-class PullRequestCommand extends Command
+class PullRequestCommand extends ContainerAwareCommand
 {
     protected function configure()
     {
@@ -31,10 +32,7 @@ class PullRequestCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $tableString = $this->getGithubTableString($output);
-        $pullRequestNumber = $this->postPullRequest();
-        $client = $this->api;
-        $pullRequest = $client->get('pull-request', $pullRequestNumber);
-        $client->post('pull-request', $pullRequest, $tableString);
+        $prNumber = $this->postPullRequest($output, $tableString);
     }
 
     /**
@@ -103,4 +101,69 @@ class PullRequestCommand extends Command
 
         return $table;
     }
+
+    protected function postPullRequest($output, $description)
+    {
+        $username = $this->getContainer()->getParameter('github.username');
+        $repoName = $this->getRepoName();
+
+        // push branch
+        // assume we have all committed
+        $commands = array(
+            sprintf('git remote add %s git@github.com:%s/%s.git', $username, $repoName),
+            'git remote update',
+            /* here fork via github for later */
+            sprintf('git push -u %s %s', $username, $this->extractBranchName()),
+        );
+
+        foreach ($commands as $command) {
+            $this->runItem($explodedCommand = explode(' ', $command));
+        }
+
+        /** @var \Github\Client $client */
+//        $client = $this->getContainer()->get('dbu_gh_collector.github.client');
+//        $client->api('');
+        // create pr with message
+    }
+
+    protected function runItem(array $command)
+     {
+         $builder = new ProcessBuilder($command);
+         $builder
+             ->setTimeout(3600)
+         ;
+         $process = $builder->getProcess();
+         $process->run(function ($type, $buffer) {
+                    if (Process::ERR === $type) {
+                            echo 'ERR > ' . $buffer;
+                 } else {
+                            echo 'OUT > ' . $buffer;
+                 }
+             }
+         );
+
+         if (!$process->isSuccessful()) {
+             throw new \RuntimeException($process->getErrorOutput());
+         }
+    }
+
+    /**
+     * @return string
+     */
+    protected function extractBranchName()
+    {
+        $process = new Process('git branch | grep "*" | cut -d " " -f 2');
+        $process->run();
+
+        return $process->getOutput();
+    }
+
+    private function getRepoName()
+    {
+        $process = new Process('git remote show -n origin | grep Fetch | cut -d "/" -f 5 | cut -d "." -f 1');
+        $process->run();
+
+        return $process->getOutput();
+    }
+
 }
