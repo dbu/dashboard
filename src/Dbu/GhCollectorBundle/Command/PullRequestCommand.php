@@ -31,6 +31,7 @@ class PullRequestCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->workDir = $this->getContainer()->getParameter('kernel.root_dir').'/../vendor/symfony/symfony';
         $tableString = $this->getGithubTableString($output);
         $prNumber = $this->postPullRequest($output, $tableString);
     }
@@ -104,35 +105,56 @@ class PullRequestCommand extends ContainerAwareCommand
 
     protected function postPullRequest($output, $description)
     {
-        $username = $this->getContainer()->getParameter('github.username');
+        $username = $this->getContainer()->getParameter('github.nickname');
         $repoName = $this->getRepoName();
+        $branchName = $this->extractBranchName();
+        $vendorName = 'cordoval';//;
+        $baseBranch = 'cordoval/master';// $vendorName.'/'.$ref;
+        $title = 'sample';
 
-        // push branch
-        // assume we have all committed
         $commands = array(
-            sprintf('git remote add %s git@github.com:%s/%s.git', $username, $repoName),
-            'git remote update',
-            /* here fork via github for later */
-            sprintf('git push -u %s %s', $username, $this->extractBranchName()),
+            array(
+                'line' => sprintf('git remote add %s git@github.com:%s/%s.git', $username, $username, $repoName),
+                'allow_failures' => true
+            ),
+            array(
+                'line' => 'git remote update',
+                'allow_failures' => false
+            ),
+            array(
+                'line' => sprintf('git push -u %s %s', $username, $branchName),
+                'allow_failures' => false
+            )
         );
 
         foreach ($commands as $command) {
-            $this->runItem($explodedCommand = explode(' ', $command));
+            $this->runItem($explodedCommand = explode(' ', $command['line']), $command['allow_failures']);
         }
 
         /** @var \Github\Client $client */
-//        $client = $this->getContainer()->get('dbu_gh_collector.github.client');
-//        $client->api('');
-        // create pr with message
+        $client = $this->getContainer()->get('dbu_gh_collector.github.client');
+        $pullRequest = $client
+            ->api('pull_request')
+            ->create($vendorName, $repoName, array(
+                'base'  => $baseBranch,
+                'head'  => $branchName,
+                'title' => $title,
+                'body'  => $description
+            )
+        );
+
+        ladybug_dump($pullRequest);
     }
 
-    protected function runItem(array $command)
-     {
+    protected function runItem(array $command, $allowFailures = false)
+    {
          $builder = new ProcessBuilder($command);
          $builder
-             ->setTimeout(3600)
+            ->setWorkingDirectory($this->workDir)
+            ->setTimeout(3600)
          ;
          $process = $builder->getProcess();
+
          $process->run(function ($type, $buffer) {
                     if (Process::ERR === $type) {
                             echo 'ERR > ' . $buffer;
@@ -142,28 +164,24 @@ class PullRequestCommand extends ContainerAwareCommand
              }
          );
 
-         if (!$process->isSuccessful()) {
-             throw new \RuntimeException($process->getErrorOutput());
+         if (!$process->isSuccessful() && !$allowFailures) {
+            throw new \RuntimeException($process->getErrorOutput());
          }
     }
 
-    /**
-     * @return string
-     */
     protected function extractBranchName()
     {
-        $process = new Process('git branch | grep "*" | cut -d " " -f 2');
+        $process = new Process('git branch | grep "*" | cut -d " " -f 2', $this->workDir);
         $process->run();
 
-        return $process->getOutput();
+        return trim($process->getOutput());
     }
 
-    private function getRepoName()
+    protected function getRepoName()
     {
-        $process = new Process('git remote show -n origin | grep Fetch | cut -d "/" -f 5 | cut -d "." -f 1');
+        $process = new Process('git remote show -n origin | grep Fetch | cut -d "/" -f 5 | cut -d "." -f 1', $this->workDir);
         $process->run();
 
-        return $process->getOutput();
+        return trim($process->getOutput());
     }
-
 }
