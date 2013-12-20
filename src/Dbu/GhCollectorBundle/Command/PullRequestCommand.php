@@ -16,6 +16,8 @@ use Symfony\Component\Process\ProcessBuilder;
 
 class PullRequestCommand extends ContainerAwareCommand
 {
+    protected $workDir;
+
     protected function configure()
     {
         $this->setName('dbu:pr')
@@ -137,13 +139,15 @@ class PullRequestCommand extends ContainerAwareCommand
             ->api('pull_request')
             ->create($vendorName, $repoName, array(
                 'base'  => $baseBranch,
-                'head'  => $branchName,
+                'head'  => $username.'/'.$branchName,
                 'title' => $title,
                 'body'  => $description
             )
         );
 
         ladybug_dump($pullRequest);
+
+        return $pullRequest;
     }
 
     protected function runItem(array $command, $allowFailures = false)
