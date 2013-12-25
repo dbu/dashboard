@@ -4,8 +4,10 @@ app/logs/*
 vendor/
 components/
 app/config/parameters.yml
+app/bootstrap.php.cache
 bin/
 /web/js
 /web/css
 /web/assetic
 /web/bundles
+composer.lock
