@@ -2,6 +2,7 @@
 
 namespace Dbu\GhCollectorBundle\Github;
 
+use Github\Api\Repo;
 use Github\Client;
 use Github\ResultPager;
 
@@ -44,11 +45,8 @@ class Synchronizer
         $issueApi = $this->github->api('issue');
         /** @var $org \Github\Api\Organization */
         $org = $this->github->api('organization');
-        /** @var $repoApi \Github\Api\Repo */
-        $repoApi = $this->github->api('repo');
-        /** @var $gitDataApi \Github\Api\GitData */
-        $gitDataApi = $this->github->api('git_data');
-
+        /** @var $repo \Github\Api\Repo */
+        $repo = $this->github->api('repo');
 
         try {
             $repositories = $this->paginator->fetchAll($user, 'repositories', array($ghaccount));
@@ -66,6 +64,7 @@ class Synchronizer
         foreach ($repositories as $repository) {
             $repository['owner_login'] = $repository['owner']['login'];
             unset($repository['owner']);
+            $repository['composer_name'] = $this->getComposerName($repo, $repository);
 
             $prDocs = $this->cleanItems(
                 $this->paginator->fetchAll($prApi, 'all', array($ghaccount, $repository['name'])),
@@ -100,6 +99,20 @@ class Synchronizer
         }
 
         return true;
+    }
+
+    private function getComposerName(Repo $repo, array $repository)
+    {
+        try {
+            $composer = $repo->contents()->show($repository['owner_login'], $repository['name'], 'composer.json');
+            if ('base64' === $composer['encoding']) {
+                $composer = json_decode(base64_decode($composer['content']));
+                return $composer->name;
+            }
+        } catch (\Exception $e) {
+        }
+
+        return false;
     }
 
     /**

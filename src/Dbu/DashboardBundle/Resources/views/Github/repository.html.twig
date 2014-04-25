@@ -1,7 +1,7 @@
 <div class="section-repository">
     <h2>{{ repo.data.name }}</h2>
     {% for source in status_badges %}
-        {% include "DbuDashboardBundle:Github:statusBadge.html.twig" with {"repo_name": repo.data.full_name, "source": source } %}
+        {% include "DbuDashboardBundle:Github:statusBadge.html.twig" with {"repo": repo.data, "source": source } %}
     {% endfor %}
 
     <ul class="nav nav-tabs">
