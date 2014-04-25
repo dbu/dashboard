@@ -1,9 +1,5 @@
 <div class="section-repository">
     <h2>{{ repo.data.name }}</h2>
-    {% if repo.last_tag.name is defined %}
-        <span>{{ repo.last_tag.name }}</span>
-    {% endif %}
-
     {% for source in status_badges %}
         {% include "DbuDashboardBundle:Github:statusBadge.html.twig" with {"repo_name": repo.data.full_name, "source": source } %}
     {% endfor %}

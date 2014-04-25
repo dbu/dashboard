@@ -69,7 +69,7 @@ class Synchronizer
 
             $prDocs = $this->cleanItems(
                 $this->paginator->fetchAll($prApi, 'all', array($ghaccount, $repository['name'])),
-                $repository['id'],
+                $repository,
                 'github_pull'
             );
             $repository['open_pull_count'] = count($prDocs);
@@ -77,12 +77,12 @@ class Synchronizer
             if ($repository['has_issues']) {
                 $issueDocs = $this->cleanItems(
                     $this->paginator->fetchAll($issueApi, 'all', array($ghaccount, $repository['name'])),
-                    $repository['id'],
+                    $repository,
                     'github_issue',
                     true
                 );
             } else {
-                // TODO: fetch from jira i.e. for phpcr-odm
+                $this->log("Repository {$repository['name']} has github issues deactivated.");
                 $issueDocs = array();
             }
             $repository['open_issues_only'] = count($issueDocs);
@@ -93,11 +93,6 @@ class Synchronizer
             if ($issueDocs) {
                 $this->issueType->addDocuments($issueDocs);
             }
-
-            // fetch details on repository
-            $tags = $repoApi->tags($ghaccount, $repository['name']);
-
-            $repository['last_tag'] = isset($tags[0]) ? $tags[0] : array();
 
             $this->repositoryType->addDocument(
                 new \Elastica\Document($repository['id'], $repository, 'github_repository')
@@ -115,7 +110,7 @@ class Synchronizer
      *
      * @return \Elastica\Document[]
      */
-    private function cleanItems($items, $repositoryId, $docType, $skipPr = false)
+    private function cleanItems($items, $repository, $docType, $skipPr = false)
     {
         $docs = array();
 
@@ -123,6 +118,11 @@ class Synchronizer
             if ($skipPr && !empty($r['pull_request']['html_url'])) {
                 continue;
             }
+            // de-normalize repository information into issue
+            $r['name'] = $repository['name'];
+            $r['full_name'] = $repository['full_name'];
+            $r['owner_login'] = $repository['owner_login'];
+
             $r['user_login'] = $r['user']['login'];
             unset($r['user']);
             $r['assignee_login'] = isset($r['assignee']['login']) ? $r['assignee']['login'] : false;
@@ -134,7 +134,7 @@ class Synchronizer
             }
             unset($r['milestone']);
             $doc = new \Elastica\Document($r['id'], $r, $docType);
-            $doc->setParent($repositoryId);
+            $doc->setParent($repository['id']);
             $docs[] = $doc;
         }
 

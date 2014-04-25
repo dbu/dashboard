@@ -9,11 +9,18 @@
     <body>
         <div id="toolbar">
             <form method="GET"><input type="text" name="q" value="{{ q }}"/><input type="submit" value="search"/><br/>
-                {% for name, facet in repositories.facets %}
+                {% for name, facet in facets %}
                     {{ name }}:
+                    {% if not facet.terms %}
+                        <em>No matching facets</em>
+                    {% endif %}
                     {% for term in facet.terms %}
-                        {# TODO: keep facet selection #}
-                        <input type="checkbox" name="facets[{{ name }}][]" id="facet-{{ name }}-{{ term.term }}" value="{{ term.term }}"/> <label for="facet-{{ name }}-{{ term.term }}">{{ term.term }} ({{ term.count }})</label>
+                        <input type="checkbox" name="facets[{{ name }}][]" id="facet-{{ name }}-{{ term.term }}" value="{{ term.term }}"
+                            {% if active_facets[name] is defined and term.term in active_facets[name] %}
+                                checked="checked"
+                            {% endif %}
+                        />
+                        <label for="facet-{{ name }}-{{ term.term }}">{{ term.term }} ({{ term.count }})</label>
                     {% endfor %}
                     <br/>
                 {% endfor %}
@@ -23,11 +30,12 @@
                 Last Updated:
                 {% include "DbuDashboardBundle:Default:datefilter.html.twig" with {"type": "lastupdated", "value": lastupdated} %}
             </form>
+            <form method="GET" id="reset"><input type="submit" value="reset all filters"/></form>
         </div>
         <div class="container-fluid">
             <div class="row-fluid">
                 <div class="span6">
-                    {% include "DbuDashboardBundle:Github:repositoryList.html.twig" with {"repositories": repositories, "q": q, "facets": facets, "lastupdated": lastupdated} %}
+                    {% include "DbuDashboardBundle:Github:repositoryList.html.twig" with {"repositories": repositories, "q": q, "active_facets": active_facets, "lastupdated": lastupdated} %}
                 </div>
                 <div class="span6" id="additional-info">
                     <br/>(Hover over an issue to display information)

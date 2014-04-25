@@ -3,8 +3,9 @@
 namespace Dbu\DashboardBundle\Controller;
 
 use Elastica\Filter\Bool;
-use Elastica\Filter\HasParent;
+use Elastica\Filter\BoolAnd;
 use Elastica\Query;
+use Elastica\Result;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,7 +18,7 @@ class DefaultController extends Controller
             ? $request->query->get('q')
             : false
         ;
-        $facets = $request->query->has('facets')
+        $activeFacets = $request->query->has('facets')
             ? $request->query->get('facets')
             : array()
         ;
@@ -30,30 +31,51 @@ class DefaultController extends Controller
             : false
         ;
 
-        /** @var $index \Elastica\Index */
-        $index = $this->get('fos_elastica.index.projects');
-        $repositories = $index->search($this->buildOverviewQuery(false /*$q*/, $facets, $lastupdated, $created));
+        /** @var $index \Elastica\Type */
+        $repositoryType = $this->get('fos_elastica.index.projects.github_repository');
+        $repositories = $repositoryType->search($this->buildOverviewQuery(false /*$q*/, $activeFacets, $lastupdated, $created));
+
+        $facets = $this->buildFacets($activeFacets, $lastupdated, $created);
 
         return $this->render('DbuDashboardBundle:Default:index.html.twig', array(
             'repositories' => $repositories,
             'q' => $q,
             'facets' => $facets,
+            'active_facets' => $activeFacets,
             'lastupdated' => $lastupdated,
             'created' => $created,
         ));
     }
 
-    public function repositoryAction($repository, $q, array $facets, $lastupdated, $created)
+    /**
+     * Render one repository.
+     *
+     * @param $repository
+     * @param $q
+     * @param array $activeFacets
+     * @param $lastupdated
+     * @param $created
+     *
+     * @return Response
+     */
+    public function repositoryAction(Result $repository, $q, array $activeFacets, $lastupdated, $created)
     {
-        /** @var $index \Elastica\Index */
-        $index = $this->get('fos_elastica.index.projects');
-        $info = $repository->getData();
-        $pulls = $index->search($this->buildIssuesQuery($info['id'], $q, $facets, $lastupdated, $created, 'github_pull'));
-        $issues = $index->search($this->buildIssuesQuery($info['id'], $q, $facets, $lastupdated, $created, 'github_issue'));
+        /** @var $pullType \Elastica\Type */
+        $pullType = $this->get('fos_elastica.index.projects.github_pull');
+        /** @var $issueType \Elastica\Type */
+        $issueType = $this->get('fos_elastica.index.projects.github_issue');
 
-        // workaround for missing children query
-        if ($q && ! (count($pulls) || count($issues))) {
-            return new Response();
+        $info = $repository->getData();
+        $query = $this->buildIssuesQuery($info['id'], $q, $activeFacets, $lastupdated, $created);
+
+        $pulls = $pullType->search($query);
+        $issues = $issueType->search($query);
+
+        if (($q || count($activeFacets || $lastupdated || $created))
+            && ! (count($pulls) || count($issues))) {
+            return $this->render('DbuDashboardBundle:Github:emptyRepository.html.twig', array(
+                'repo' => $repository,
+            ));
         }
 
         return $this->render('DbuDashboardBundle:Github:repository.html.twig', array(
@@ -88,88 +110,112 @@ class DefaultController extends Controller
             $query = new \Elastica\Query\MatchAll();
         }
 
-        $repositoryFilter = $this->buildRepositoryFilter();
-        $parentFilter = new HasParent(
-            new Query\Filtered(new \Elastica\Query\MatchAll(), $repositoryFilter),
-            'github_repository'
-        );
+        $queryObject->setQuery($query);
+
+        $queryObject->setFilter($this->buildRepositoryFilter());
+
+        return $queryObject;
+    }
+
+    private function buildFacets(array $activeFacets, $lastupdated, $created)
+    {
+        /** @var $index \Elastica\Index */
+        $index = $this->get('fos_elastica.index.projects');
+
+        $query = new Query();
+        $query->setSize(0);
 
         $facet = new \Elastica\Facet\Terms('Milestones');
         $facet->setField('milestone_title');
         $facet->setSize(3);
         $facet->setOrder('count');
-        //$facet->setFilter($parentFilter);
-        $queryObject->addFacet($facet);
+        $query->addFacet($facet);
 
         $facet = new \Elastica\Facet\Terms('Author');
         $facet->setField('user_login');
         $facet->setSize(8);
         $facet->setOrder('count');
-        //$facet->setFilter($parentFilter);
-        $queryObject->addFacet($facet);
+        $query->addFacet($facet);
 
         $facet = new \Elastica\Facet\Terms('Assignee');
         $facet->setField('assignee_login');
         $facet->setSize(8);
         $facet->setOrder('count');
-        //$facet->setFilter($parentFilter);
-        $queryObject->addFacet($facet);
+        $query->addFacet($facet);
 
-        $filterAnd = new \Elastica\Filter\BoolAnd();
-        $filterAnd->addFilter($repositoryFilter);
-        $filterAnd->addFilter(new \Elastica\Filter\Type('github_repository'));
+        $filter = new BoolAnd();
+        $filter->addFilter($this->buildRepositoryFilter());
+        $facetFilter = $this->buildActiveFacetsFilter($activeFacets, $lastupdated, $created);
+        if ($facetFilter->getFilters()) {
+            $filter->addFilter($facetFilter);
+        }
+        $query->setQuery(new Query\Filtered(new \Elastica\Query\MatchAll(), $filter));
 
-        $queryObject->setQuery($query);
-        $queryObject->setFilter($filterAnd);
-
-        return $queryObject;
+        return $index->search($query)->getFacets();
     }
 
     /**
-     * Query for github issues or pulls
+     * Query for github issues or pulls.
+     *
      * @param $repositoryId
-     * @param $q
-     * @param array $facets list of facet filters to use
+     * @param string $q Query string
+     * @param array $activeFacets list of facet filters to use
      * @param $lastupdated
      * @param $created
-     * @param string $type
      *
      * @return Query
      */
-    private function buildIssuesQuery($repositoryId, $q, array $facets, $lastupdated, $created, $type)
+    private function buildIssuesQuery($repositoryId, $q, array $activeFacets, $lastupdated, $created)
     {
         $query = new Query();
 
-        $filterRepository = new \Elastica\Filter\BoolAnd();
-        $filterRepository->addFilter(new \Elastica\Filter\Type($type));
-        $filterRepository->addFilter(new \Elastica\Filter\Term(array('_parent' => $repositoryId)));
-        if (isset($facets['Milestones'])) {
-            $filterRepository->addFilter(new \Elastica\Filter\Terms('milestone_title', $facets['Milestones']));
-        }
-        if (isset($facets['Author'])) {
-            $filterRepository->addFilter(new \Elastica\Filter\Terms('user_login', $facets['Author']));
-        }
-        if (isset($facets['Assignee'])) {
-            $filterRepository->addFilter(new \Elastica\Filter\Terms('assignee_login', $facets['Assignee']));
-        }
-        if ($lastupdated) {
-            $filterRepository->addFilter(new \Elastica\Filter\NumericRange('updated_at', array('from' => date('Y-m-d', strtotime("{$lastupdated} days ago")))));
-        }
-        if ($created) {
-            $filterRepository->addFilter(new \Elastica\Filter\NumericRange('created_at', array('from' => date('Y-m-d', strtotime("{$created} days ago")))));
-        }
+        $bool = new Query\Bool();
 
-        $query->setFilter($filterRepository);
+        $bool->addMust(new \Elastica\Query\Term(array('_parent' => $repositoryId)));
+
+        $activeFacetsFilter = $this->buildActiveFacetsFilter($activeFacets, $lastupdated, $created);
+        if ($activeFacetsFilter->getFilters()) {
+            $query->setFilter($activeFacetsFilter);
+        }
         $query->setSize(5000);
         $query->setSort(array('id' => array('order' => 'desc')));
 
         if ($q) {
-            $query->setQuery($this->buildIssuesQueryFragment($q));
-        } else {
-            $query->setQuery(new \Elastica\Query\MatchAll());
+            $bool->addMust($this->buildIssuesQueryFragment($q));
         }
 
+        $query->setQuery($bool);
+
         return $query;
+    }
+
+    /**
+     * @param array $activeFacets
+     * @param $lastupdated
+     * @param $created
+     *
+     * @return \Elastica\Filter\AbstractMulti the filter to apply
+     */
+    private function buildActiveFacetsFilter(array $activeFacets, $lastupdated, $created)
+    {
+        $activeFacetsFilter = new \Elastica\Filter\BoolAnd();
+        if (isset($activeFacets['Milestones'])) {
+            $activeFacetsFilter->addFilter(new \Elastica\Filter\Terms('milestone_title', $activeFacets['Milestones']));
+        }
+        if (isset($activeFacets['Author'])) {
+            $activeFacetsFilter->addFilter(new \Elastica\Filter\Terms('user_login', $activeFacets['Author']));
+        }
+        if (isset($activeFacets['Assignee'])) {
+            $activeFacetsFilter->addFilter(new \Elastica\Filter\Terms('assignee_login', $activeFacets['Assignee']));
+        }
+        if ($lastupdated) {
+            $activeFacetsFilter->addFilter(new \Elastica\Filter\NumericRange('updated_at', array('from' => date('Y-m-d', strtotime("{$lastupdated} days ago")))));
+        }
+        if ($created) {
+            $activeFacetsFilter->addFilter(new \Elastica\Filter\NumericRange('created_at', array('from' => date('Y-m-d', strtotime("{$created} days ago")))));
+        }
+
+        return $activeFacetsFilter;
     }
 
     private function buildIssuesQueryFragment($q)
@@ -192,33 +238,39 @@ class DefaultController extends Controller
         $excludes = array();
         $includes = array();
         foreach ($this->getRepositories() as $repository => $options) {
-
             if (isset($options['include'])) {
                 foreach ($options['include'] as $include) {
                     $includes[] = "$repository/$include";
                 }
             } else {
                 $owners[] = $repository;
-
                 if (isset($options['exclude'])) {
                     foreach ($options['exclude'] as $exclude) {
-                        $excludes[] = $exclude;//"$repository/$exclude";
+                        $excludes[] = "$repository/$exclude";
                     }
                 }
             }
         }
 
-        $bool = new Bool();
-        $bool->addMust(new \Elastica\Filter\Terms('owner_login', $owners));
-        $bool->addMustNot(new \Elastica\Filter\Terms('name', $excludes));
+        $filter = new \Elastica\Filter\Terms('owner_login', $owners);
 
-        $or = new \Elastica\Filter\BoolOr();
-        $or->addFilter(
-          new \Elastica\Filter\Terms('full_name', $includes)
-        );
-        $or->addFilter($bool);
+        if ($excludes) {
+            $prev = $filter;
+            $filter = new Bool();
+            $filter->addMust($prev);
+            $filter->addMustNot(new \Elastica\Filter\Terms('full_name', $excludes));
+        }
 
-        return $or;
+        if ($includes) {
+            $prev = $filter;
+            $filter = new \Elastica\Filter\BoolOr();
+            $filter->addFilter($prev);
+            $filter->addFilter(
+                new \Elastica\Filter\Terms('full_name', $includes)
+            );
+        }
+
+        return $filter;
     }
 
     /**
