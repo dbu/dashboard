@@ -107,7 +107,8 @@ class Synchronizer
             $composer = $repo->contents()->show($repository['owner_login'], $repository['name'], 'composer.json');
             if ('base64' === $composer['encoding']) {
                 $composer = json_decode(base64_decode($composer['content']));
-                return $composer->name;
+
+                return isset($composer->name) ? $composer->name : false;
             }
         } catch (\Exception $e) {
         }
