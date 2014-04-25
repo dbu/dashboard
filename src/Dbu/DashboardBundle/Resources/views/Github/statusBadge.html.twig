@@ -1,3 +1,5 @@
+{% spaceless %}
 <a href="{{ source.link|replace({'#repo_name#': repo_name }) }}" target="_blank" title="{{ source.caption }}">
     <img src="{{ source.img|replace({'#repo_name#': repo_name }) }}" alt="{{ source.caption }}">
 </a>
+{% endspaceless %}

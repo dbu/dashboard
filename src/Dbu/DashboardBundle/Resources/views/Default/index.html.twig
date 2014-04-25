@@ -2,7 +2,7 @@
 <html>
     <head>
         <title>{{ repositories.count }} Repositories | Dashboard</title>
-        {% stylesheets '@bootstrap_less' '@DbuDashboardBundle/Resources/less/dashboard.less' combine=true %}
+        {% stylesheets '%kernel.root_dir%/../vendor/twitter/bootstrap/less/bootstrap.less' '@DbuDashboardBundle/Resources/less/dashboard.less' combine=true %}
             <link href="{{ asset_url }}" type="text/css" rel="stylesheet" />
         {% endstylesheets %}
     </head>

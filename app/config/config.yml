@@ -96,15 +96,3 @@ assetic:
                 - '%kernel.root_dir%/../vendor/twitter/bootstrap/js/bootstrap-typeahead.js'
                 - '%kernel.root_dir%/../vendor/twitter/bootstrap/js/bootstrap-affix.js'
 #            filters: [?yui_js]
-        bootstrap_less:
-            inputs:
-                - '%kernel.root_dir%/../vendor/twitter/bootstrap/less/bootstrap.less'
-            filters: [lessphp]
-
-# Swiftmailer Configuration
-#swiftmailer:
-#    transport: %mailer_transport%
-#    host:      %mailer_host%
-#    username:  %mailer_user%
-#    password:  %mailer_password%
-#    spool:     { type: memory }
