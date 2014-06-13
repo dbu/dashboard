@@ -26,6 +26,7 @@
             <argument type="service" id="fos_elastica.index.projects.github_repository" />
             <argument type="service" id="fos_elastica.index.projects.github_pull" />
             <argument type="service" id="fos_elastica.index.projects.github_issue" />
+            <argument type="service" id="logger"/>
         </service>
     </services>
 

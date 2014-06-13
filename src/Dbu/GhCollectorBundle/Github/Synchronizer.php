@@ -5,6 +5,9 @@ namespace Dbu\GhCollectorBundle\Github;
 use Github\Api\Repo;
 use Github\Client;
 use Github\ResultPager;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class Synchronizer
 {
@@ -16,19 +19,34 @@ class Synchronizer
     private $pullType;
     /** @var \Elastica\Type */
     private $issueType;
+    /**
+     * @var \Github\ResultPager
+     */
     private $paginator;
+
+    /**
+     * @var OutputInterface|null
+     */
+    private $output;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     public function __construct(
         Client $github,
         \Elastica\Type $repositoryType,
         \Elastica\Type $pullType,
-        \Elastica\Type $issueType
+        \Elastica\Type $issueType,
+        LoggerInterface $logger
     ) {
         $this->github = $github;
         $this->paginator = new ResultPager($this->github);
         $this->repositoryType = $repositoryType;
         $this->pullType = $pullType;
         $this->issueType = $issueType;
+        $this->logger = $logger;
     }
 
     /**
@@ -37,28 +55,22 @@ class Synchronizer
      */
     public function synchronize($ghaccount)
     {
+        $this->log(LogLevel::DEBUG, "Synchronizing $ghaccount");
         /** @var $user \Github\Api\User */
         $user = $this->github->api('user');
         /** @var $prApi \Github\Api\PullRequest */
         $prApi = $this->github->api('pull_request');
         /** @var $issueApi \Github\Api\Issue */
         $issueApi = $this->github->api('issue');
-        /** @var $org \Github\Api\Organization */
-        $org = $this->github->api('organization');
         /** @var $repo \Github\Api\Repo */
         $repo = $this->github->api('repo');
 
         try {
             $repositories = $this->paginator->fetchAll($user, 'repositories', array($ghaccount));
         } catch (\Github\Exception\RuntimeException $e) {
-            $this->log("<error>User '$ghaccount' not found</error>");
+            $this->log(LogLevel::CRITICAL, "<error>User '$ghaccount' not found</error>");
 
             return false;
-        }
-        try {
-            $repositories = array_merge($repositories, $this->paginator->fetchAll($org, 'repositories', array($ghaccount)));
-        } catch (\Github\Exception\RuntimeException $e) {
-            // we don't care, was probably just a normal user
         }
 
         foreach ($repositories as $repository) {
@@ -66,8 +78,15 @@ class Synchronizer
             unset($repository['owner']);
             $repository['composer_name'] = $this->getComposerName($repo, $repository);
 
+            try {
+                $items = $this->paginator->fetchAll($prApi, 'all', array($ghaccount, $repository['name']));
+            } catch(\Github\Exception\RuntimeException $e) {
+                $this->log(LogLevel::ERROR, "<error>Repository $ghaccount/{$repository['name']} failed:</error>\n" . $e->getMessage());
+
+                continue;
+            }
             $prDocs = $this->cleanItems(
-                $this->paginator->fetchAll($prApi, 'all', array($ghaccount, $repository['name'])),
+                $items,
                 $repository,
                 'github_pull'
             );
@@ -81,7 +100,7 @@ class Synchronizer
                     true
                 );
             } else {
-                $this->log("Repository {$repository['name']} has github issues deactivated.");
+                $this->log(LogLevel::INFO, "Repository $ghaccount/{$repository['name']} has github issues deactivated.");
                 $issueDocs = array();
             }
             $repository['open_issues_only'] = count($issueDocs);
@@ -155,7 +174,20 @@ class Synchronizer
         return $docs;
     }
 
-    private function log($message)
+    public function setOutput(OutputInterface $output)
     {
+        $this->output = $output;
+    }
+
+    private function log($level, $message)
+    {
+        $this->logger->log($level, $message);
+
+        if ($this->output
+            && ($this->output->getVerbosity() > OutputInterface::VERBOSITY_NORMAL
+                || in_array($level, array(LogLevel::EMERGENCY, LogLevel::ALERT, LogLevel::CRITICAL, LogLevel::ERROR))
+        )) {
+            $this->output->writeln($message);
+        }
     }
 }

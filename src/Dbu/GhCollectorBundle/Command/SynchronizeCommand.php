@@ -64,6 +64,7 @@ EOF
 
         /** @var $synchronizer Synchronizer */
         $synchronizer = $this->getContainer()->get('dbu_gh_collector.github.synchronizer');
+        $synchronizer->setOutput($output);
 
         $organizations =
             $input->hasArgument('organziation')
