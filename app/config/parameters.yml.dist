@@ -2,35 +2,15 @@ parameters:
     locale:            en
     secret:            ThisTokenIsNotSoSecretChangeIt
 
-    github.username:   yourloginname
-    github.password:   yourpassword
+    github.username:   API TOKEN
 
-    repositories:
-        phpcr:
-            include:
-                - phpcr
-                - phpcr-utils
-        jackalope:
-            exclude:
-                - jackalope-mongodb
+    rs_issues:
+        github:
+            - dbu/dashboard                             # explicit repo
+            - phpcr/*                                   # all user/org repos
+            - symfony/[Console|Debug]+$                 # only symfony/Console or symfony/Debug
+            - doctrine/(?!common|lexer)([a-z0-9\.-]+)$  # all but doctrine/common or doctrine/lexer
+        jira:
+            # jira is a bit special, create this string with app/console issues:jira-crypt
+            - ENCRYPTEDSTRING https://jira.domain.com PROJKEY
 
-    status_badges:
-        travis_build_status:
-            caption: Travis Build Status
-            img: "https://secure.travis-ci.org/#repo_name#.png"
-            link: "http://travis-ci.org/#repo_name#"
-
-        pugx_stable_status:
-            caption: Latest Stable Version
-            img: "https://poser.pugx.org/#repo_name#/version.png"
-            link: "https://packagist.org/packages/#repo_name#"
-
-        pugx_stable_downloads:
-            caption: Total Downloads
-            img: "https://poser.pugx.org/#repo_name#/d/total.png"
-            link: "https://packagist.org/packages/#repo_name#"
-
-        #other_build_status:
-        #    img: "https://secure.other-ci.org/#repo_name#.png"
-        #    link: "http://other-ci.org/#repo_name#"
-        #    caption: Other Build Status
