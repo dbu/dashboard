@@ -149,6 +149,7 @@ $icon-font-path: "/dist/fonts/";
 .dropdown-menu {
   &.open {
     display: block;
+    width: 100%;
   }
 
   a {
@@ -172,4 +173,60 @@ $icon-font-path: "/dist/fonts/";
   src: url("/dist/fonts/octicons.eot?#iefix") format("embedded-opentype"), url("/dist/fonts/octicons.woff") format("woff"), url("/dist/fonts/octicons.ttf") format("truetype"), url("/dist/fonts/octicons.svg#6d0976c7609c435a1353fcfc5de3cd95cee2a673") format("svg");
   font-weight: normal;
   font-style: normal;
+}
+
+
+@media (max-width: $screen-tablet) {
+
+  h4 {
+    font-size: 14px;
+  }
+
+  .navbar-form .octicon.octicon-chevron-down {
+    position: absolute;
+    right:5px;
+  }
+
+  .nav > li > a {
+    display: inline-table;
+  }
+  .top-navigation .nav .octicon {
+    margin-left: 0;
+  }
+
+  .nav li {
+    display: inline;
+  }
+
+  .repository > header .badges {
+    position: inherit;
+    padding: 0;
+
+    a {
+      margin: 0 2px 0 0;
+    }
+  }
+
+  .navbar-collapse.collapse.in {
+    max-height: 100%;
+    form {
+      border: none;
+      padding: 0;
+    }
+    .input-group, .form-group {
+      margin: 5px 10px;
+    }
+
+    .input-group-btn {
+      width: 100%;
+
+      .btn {
+        display: block;
+      }
+    }
+
+    .dropdown-menu {
+      position: static;
+    }
+  }
 }
