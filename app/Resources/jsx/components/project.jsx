@@ -66,13 +66,13 @@ var Project = React.createClass({
             };
 
             this.props.issues.map(function (issue) {
-                var ownerFilter = checkFilter('owner', issue, this.props.filters);
+                var authorFilter = checkFilter('author', issue, this.props.filters);
                 var assigneeFilter = checkFilter('assignee', issue, this.props.filters);
                 var typeFilter = checkFilter('type', issue, this.props.filters);
-                var textFilter = this.props.filters.text.val() === null || issue.title.val().toLowerCase().indexOf(this.props.filters.text.val().toLowerCase()) != -1;
+                var textFilter = this.props.filters.description.val() === null || issue.title.val().toLowerCase().indexOf(this.props.filters.description.val().toLowerCase()) != -1;
                 var stateFilter = checkFilter('state', issue, this.props.filters);
 
-                if (ownerFilter && assigneeFilter && typeFilter && textFilter && stateFilter) {
+                if (authorFilter && assigneeFilter && typeFilter && textFilter && stateFilter) {
                     issues.push(issue);
                 }
             }.bind(this));
@@ -87,7 +87,7 @@ var Project = React.createClass({
         if (this.props.project.issuesCount.val() === 0) {
             classes.push('empty');
         }
-        if (issues.length === 0 && this.state.loaded === true) {
+        if (issues === 0 && this.state.loaded === true) {
             classes.push('shim');
         }
 
@@ -97,7 +97,7 @@ var Project = React.createClass({
     calculateCollapsedState: function(issues) {
         var collapse = this.props.collapsed.val() === true ? 'collapsed' : 'collapsed in';
 
-        if (this.props.project.issuesCount.val() === 0 || issues.length === 0) {
+        if (this.props.project.issuesCount.val() === 0 || !issues) {
             collapse = 'collapsed';
         }
 
@@ -108,7 +108,9 @@ var Project = React.createClass({
         if ('github' === this.props.project.type.val()) {
             return <span className="octicon octicon-mark-github" />
         } else if ('jira' === this.props.project.type.val()) {
-            return <img width="16" height="16" src="/img/jira_icon.gif" />
+            return <img width="16" height="16" src="/img/jira.svg" />
+        } else if ('gitlab' === this.props.project.type.val()) {
+            return <img width="18" height="18" src="/img/gitlab.svg" />
         }
     },
 
@@ -119,9 +121,9 @@ var Project = React.createClass({
     render: function () {
         var issues = this.filterIssues();
         var project = this.props.project;
-        var containerClasses = this.calculateContainerClasses(issues);
-        var collapse = this.calculateCollapsedState(issues);
-        var count = project.issuesCount.val();
+        var containerClasses = this.calculateContainerClasses(issues.length);
+        var collapse = this.calculateCollapsedState(issues.length);
+        var count = this.state.loaded ? issues.length : project.issuesCount.val();
         var type = this.determineIcon();
 
         return (

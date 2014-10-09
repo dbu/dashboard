@@ -2,7 +2,7 @@ parameters:
     locale:            en
     secret:            ThisTokenIsNotSoSecretChangeIt
 
-    github.username:   API TOKEN
+    github.token:   API TOKEN
 
     rs_issues:
         github:

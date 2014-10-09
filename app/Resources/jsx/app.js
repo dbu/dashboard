@@ -15,9 +15,9 @@ var cortex = new Cortex({
     collapsedFilters: {},
     filters: {
         state: [],
-        owner: [],
+        author: [],
         assignee: [],
-        text: null,
+        description: null,
         type: []
     }
 });

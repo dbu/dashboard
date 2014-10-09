@@ -10,9 +10,9 @@
         "friendsofsymfony/elastica-bundle":     "~3.0.0",
         "incenteev/composer-parameter-handler": "~2.1.0",
         "friendsofsymfony/jsrouting-bundle":    "~1.5",
-        "chobie/jira-api-restclient":           "2.0.*@dev",
+        "jms/serializer-bundle":                "~0.13",
 
-        "digitalkaoz/issues-bundle" :           "@dev"
+        "digitalkaoz/issues-bundle" :           "dev-master"
     },
     "require-dev": {
         "raulfraile/ladybug-bundle":            "@stable",
@@ -42,6 +42,13 @@
     "config": {
         "bin-dir": "bin"
     },
+
+    "repositories": [
+        {
+            "type": "vcs",
+            "url" : "/Users/robsch/workspace/IssuesBundle"
+        }
+    ],
 
     "extra": {
         "incenteev-parameters": {

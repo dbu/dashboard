@@ -5,6 +5,7 @@
 var React = require('react');
 var marked = require('marked');
 var moment = require('moment');
+var xss = require('xss');
 
 var Issue = React.createClass({
 
@@ -27,8 +28,12 @@ var Issue = React.createClass({
     },
 
     convertText: function(text) {
+        if (!text) {
+            return null;
+        }
+        text = xss(text);
         try {
-            return marked(text);
+            return marked(text, {sanitize: true});
         } catch (e) {
             return text;
         }
@@ -37,20 +42,20 @@ var Issue = React.createClass({
     render: function () {
         var icon = this.props.issue.type.val() == 'pull' ? "octicon octicon-git-pull-request type" : "octicon octicon-issue-opened type";
         var collapse = this.state.collapsed ? 'collapsed' : 'collapsed in';
-        var collapseMarkup = this.props.issue.text.val() ? <span className="collapser octicon octicon-chevron-down pull-right" onClick={this.handleToggle}></span> : '';
+        var collapseMarkup = this.props.issue.description.val() ? <span className="collapser octicon octicon-chevron-down pull-right" onClick={this.handleToggle}></span> : '';
 
         return (
             <div className="issue">
                 <h4>
                     <span className={icon}></span>
-                    <a target="_blank" href={ this.props.issue.url.val() }>#{this.props.issue.number.val()} { this.props.issue.title.val() }</a>
+                    <a target="_blank" href={ this.props.issue.url.val() }>#{this.props.issue.id.val()} { this.props.issue.title.val() }</a>
                 { collapseMarkup }
                 </h4>
                 <div>
                     <header>
                         <span>By:
                             <small>
-                                <a href={this.props.issue.owner_url.val()} target="_blank">{this.props.issue.owner.val()}</a>
+                                <a href={this.props.issue.author_url.val()} target="_blank">{this.props.issue.author.val()}</a>
                             </small>
                         </span>
                         <span>At:
@@ -66,7 +71,7 @@ var Issue = React.createClass({
                             <small>{this.props.issue.assignee.val()}</small>
                         </span>
                     </header>
-                    <div dangerouslySetInnerHTML={ {__html: this.convertText(this.props.issue.text.val())} } className={collapse}>
+                    <div dangerouslySetInnerHTML={ {__html: this.convertText(this.props.issue.description.val())} } className={collapse}>
                     </div>
                 </div>
             </div>

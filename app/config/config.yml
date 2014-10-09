@@ -18,3 +18,10 @@ framework:
     templating:
         engines: ['twig']
     default_locale:  "%locale%"
+
+jms_serializer:
+    metadata:
+        directories:
+            issues:
+                namespace_prefix: "Rs\\Issues"
+                path: "@RsIssuesBundle/Resources/config/serializer/issues"

@@ -84,6 +84,12 @@ $icon-font-path: "/dist/fonts/";
   .issue {
     @extend .list-group-item;
 
+    &:hover {
+      .collapsed {
+        display: block;
+      }
+    }
+
     > h4 {
       @extend .list-group-item-heading;
 
@@ -150,6 +156,9 @@ $icon-font-path: "/dist/fonts/";
   &.open {
     display: block;
     width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 500px; /** bad, better something that fits the screen **/
   }
 
   a {
