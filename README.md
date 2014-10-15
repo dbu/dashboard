@@ -37,46 +37,13 @@ Install Frontend Dependencies and build the CSS and JS Files (**already done thr
 Usage
 -----
 
-This Application could handle various Issue-Trackers (github/jira atm).
-
-###Configuration
-
-configure this section in your `app/config/parameters.yml`
-
-    rs_issues:
-        github:
-            - dbu/dashboard                             # explicit repo
-            - phpcr/*                                   # all user/org repos
-            - symfony/[Console|Debug]+$                 # only symfony/Console or symfony/Debug
-            - doctrine/(?!common|lexer)([a-z0-9\.-]+)$  # all but doctrine/common or doctrine/lexer
-        jira:
-            # jira is a bit special, create this string with app/console issues:jira-crypt
-            - ENCRYPTEDSTRING https://jira.domain.com PROJKEY
-
-### Jira Generator
-
-simply run the following Command, you will be asked a few credentials, and the result is a *copy-paste-line* for your config.
-
-    app/console issues:jira-crypt
-
-*note that this encrypting is only done for hiding the obvious jira credentials, its not a secure storage!*
- 
-### Synchronizing
-
-To populate the index, run the synchronize command:
-
-    app/console fos:elastica:populate #only once in the very first beginning
-    app/console issues:sync #from the second run on
-
-This should populate elasticsearch. Now you can go to the home of your site to
-see things.
+See the [IssuesBundle](https://github.com/digitalkaoz/IssuesBundle/blob/master/README.md) Documentation about configuring and usage. 
 
 ### Console
 
 There is also a command to see issues on the commandlineRun
 
     app/console issues:search github jackalope/jackalope-jackrabbit
-
 
 Technology
 ----------

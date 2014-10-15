@@ -1,6 +1,6 @@
 {
     "name": "dbu/dashboard",
-    "description": "dashboard application to monitor github activity",
+    "description": "dashboard application to monitor issue trackers",
     "autoload": {
         "psr-0": { "": "src/" }
     },
@@ -12,7 +12,7 @@
         "friendsofsymfony/jsrouting-bundle":    "~1.5",
         "jms/serializer-bundle":                "~0.13",
 
-        "digitalkaoz/issues-bundle" :           "dev-master"
+        "digitalkaoz/issues-bundle" :           "~0.1"
     },
     "require-dev": {
         "raulfraile/ladybug-bundle":            "@stable",
@@ -43,24 +43,12 @@
         "bin-dir": "bin"
     },
 
-    "repositories": [
-        {
-            "type": "vcs",
-            "url" : "/Users/robsch/workspace/IssuesBundle"
-        }
-    ],
-
     "extra": {
         "incenteev-parameters": {
             "file": "app/config/parameters.yml",
-            "keep-outdated": true
+            "keep-outdated": false
         },
-        "symfony-app-dir": "app",
-        "symfony-web-dir": "web",
-        "symfony-assets-install": "symlink",
-        "branch-alias": {
-            "dev-master": "1.0-dev"
-        }
+        "symfony-assets-install": "symlink"
     }
 
 }

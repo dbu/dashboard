@@ -32,7 +32,7 @@ var AUTOPREFIXER_BROWSERS = [
     'bb >= 10'
 ];
 
-var scriptsDir = './app/Resources/jsx/';
+var scriptsDir = './vendor/digitalkaoz/issues-bundle/Resources/jsx';
 var buildDir = './web/dist';
 
 
@@ -100,7 +100,7 @@ gulp.task('fonts', function () {
 gulp.task('styles', function () {
     // For best performance, don't add Sass partials to `gulp.src`
     return gulp.src([
-        'app/Resources/scss/*.scss'
+        'vendor/digitalkaoz/issues-bundle/Resources/scss/*.scss'
     ])
         .pipe($.changed('styles', {extension: '.scss'}))
         .pipe($.rubySass({
@@ -129,9 +129,9 @@ gulp.task('listen', function () {
 
 gulp.task('watch', function() {
     gulp.watch(['app/Resources/**/*.html.twig'], livereload.changed);
-    gulp.watch(['app/Resources/scss/*.scss'], ['styles', livereload.changed]);
-    gulp.watch(['app/Resources/jsx/**/*.js'], ['jsx', livereload.changed]);
-    gulp.watch(['app/Resources/jsx/**/*.jsx'], ['jsx', livereload.changed]);
+    gulp.watch(['vendor/digitalkaoz/issues-bundle/scss/*.scss'], ['styles', livereload.changed]);
+    gulp.watch(['vendor/digitalkaoz/issues-bundle/jsx/**/*.js'], ['jsx', livereload.changed]);
+    gulp.watch(['vendor/digitalkaoz/issues-bundle/jsx/**/*.jsx'], ['jsx', livereload.changed]);
 });
 
 // Default Task

@@ -1,9 +1,3 @@
-dashboard:
-    path: /
-    defaults:
-        _controller: FrameworkBundle:Template:template
-        template:    '::base.html.twig'
-
 rs_issues:
     resource: "@RsIssuesBundle/Resources/config/routing.xml"
     prefix:   /
