@@ -8,6 +8,5 @@ app/bootstrap.php.cache
 vendor/
 app/config/parameters.yml
 app/config/deploy.rb
-composer.lock
 bin/
 web/js
