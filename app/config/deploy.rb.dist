@@ -1,0 +1,35 @@
+set :application, "Issues Dashboard"
+set :domain,      "your domain"
+set :deploy_to,   "/var/www/vhosts/#{domain}"
+set :deploy_via,  :rsync_with_remote_cache
+set :repository,  "git@github.com:dbu/dashboard.git"
+set :serverName, "your domain"
+set :domain,     "your domain"
+set :user,       "your remote user"
+set :writable_dirs,       [cache_path, log_path]
+set :webserver_user,      "www-data"
+set :keep_releases,   3
+set :use_sudo,      false
+set :use_composer, true
+set :dump_assetic_assets, false
+set :copy_vendors, true
+set :composer_options,  "--no-dev --verbose --prefer-dist --optimize-autoloader"
+set :update_assets_version, true
+set :shared_files,    ["app/config/parameters.yml"]
+set :shared_children, [log_path, "node_modules", "bower_components"]
+
+default_run_options[:pty] = true
+ssh_options[:port] = 22123
+
+role :web,        domain
+role :app,        domain,  :primary => true
+role :db,         domain
+
+# Be more verbose by uncommenting the following line
+#logger.level = Logger::MAX_LEVEL
+
+# hooks
+#after "deploy", "deploy:cleanup"
+after "deploy" do
+  run "rm -rf #{latest_release}/app/cache/*"
+end

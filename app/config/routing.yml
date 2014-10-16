@@ -1,3 +1,6 @@
-dbu_dashboard:
-    resource: "@DbuDashboardBundle/Resources/config/routing.xml"
+rs_issues:
+    resource: "@RsIssuesBundle/Resources/config/routing.xml"
     prefix:   /
+
+fos_js_routing:
+    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"

@@ -1,10 +1,15 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
-    #<IfModule mod_vhost_alias.c>
-    #    RewriteBase /
-    #</IfModule>
+    <IfModule mod_vhost_alias.c>
+        RewriteBase /
+    </IfModule>
+
+    <FilesMatch ".(eot|ttf|otf|woff)">
+        Header set Access-Control-Allow-Origin "*"
+    </FilesMatch>
 
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^(.*)$ app.php [QSA,L]
+
 </IfModule>

@@ -1,50 +1,11 @@
 imports:
     - { resource: parameters.yml }
-    - { resource: security.yml }
-    - { resource: twig.yml }
+#    - { resource: security.yml }
+    - { resource: @RsIssuesBundle/Resources/config/es_mapping.yml }
 
 fos_elastica:
     clients:
         default: { host: localhost, port: 9200 }
-    indexes:
-        projects:
-            client: default
-            finder: ~
-            types:
-                github_repository:
-                    mappings: &repository_name_mapping
-                        name:
-                            type: string
-                            index: not_analyzed
-                        full_name:
-                            type: string
-                            index: not_analyzed
-                        owner_login:
-                            type: string
-                            index: not_analyzed
-
-
-                github_issue: &issue_mapping
-                    mappings:
-                        << : *repository_name_mapping
-                        user_login:
-                            type: string
-                            index: not_analyzed
-                        assignee_login:
-                            type: string
-                            index: not_analyzed
-                        milestone_title:
-                            type: string
-                            index: not_analyzed
-                        updated_at:
-                            type: date
-                    _parent:
-                        property: repository
-                        type: "github_repository"
-                        identifier: id
-
-                github_pull:
-                    << : *issue_mapping
 
 framework:
     #esi:             ~
@@ -53,46 +14,14 @@ framework:
     router:
         resource: "%kernel.root_dir%/config/routing.yml"
         strict_requirements: %kernel.debug%
-    form:            ~
-    csrf_protection: ~
     validation:      { enable_annotations: true }
     templating:
         engines: ['twig']
-        #assets_version: SomeVersionScheme
     default_locale:  "%locale%"
-    trusted_proxies: ~
-    session:         ~
-    fragments:       ~
 
-# Assetic Configuration
-assetic:
-    debug:          %kernel.debug%
-    use_controller: true
-    filters:
-        cssrewrite: ~
-        lessphp:
-            file: %kernel.root_dir%/../vendor/leafo/lessphp/lessc.inc.php
-            apply_to: "\.less$"
-#        #yui_css:
-#        #    jar: %kernel.root_dir%/Resources/java/yuicompressor-2.4.7.jar
-    assets:
-        jquery_js:
-            inputs:
-                - '%kernel.root_dir%/Resources/js/jquery-1.9.1.min.js'
-#            filters: [?yui_js]
-        bootstrap_js:
-            inputs:
-                - '%kernel.root_dir%/../vendor/twitter/bootstrap/js/bootstrap-transition.js'
-                - '%kernel.root_dir%/../vendor/twitter/bootstrap/js/bootstrap-alert.js'
-                - '%kernel.root_dir%/../vendor/twitter/bootstrap/js/bootstrap-modal.js'
-                - '%kernel.root_dir%/../vendor/twitter/bootstrap/js/bootstrap-dropdown.js'
-                - '%kernel.root_dir%/../vendor/twitter/bootstrap/js/bootstrap-scrollspy.js'
-                - '%kernel.root_dir%/../vendor/twitter/bootstrap/js/bootstrap-tab.js'
-                - '%kernel.root_dir%/../vendor/twitter/bootstrap/js/bootstrap-tooltip.js'
-                - '%kernel.root_dir%/../vendor/twitter/bootstrap/js/bootstrap-popover.js'
-                - '%kernel.root_dir%/../vendor/twitter/bootstrap/js/bootstrap-button.js'
-                - '%kernel.root_dir%/../vendor/twitter/bootstrap/js/bootstrap-collapse.js'
-                - '%kernel.root_dir%/../vendor/twitter/bootstrap/js/bootstrap-carousel.js'
-                - '%kernel.root_dir%/../vendor/twitter/bootstrap/js/bootstrap-typeahead.js'
-                - '%kernel.root_dir%/../vendor/twitter/bootstrap/js/bootstrap-affix.js'
-#            filters: [?yui_js]
+jms_serializer:
+    metadata:
+        directories:
+            issues:
+                namespace_prefix: "Rs\\Issues"
+                path: "@RsIssuesBundle/Resources/config/serializer/issues"

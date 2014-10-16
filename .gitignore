@@ -1,12 +1,12 @@
 web/bundles/
+bower_components/
+node_modules/
+web/dist/
 app/cache/*
 app/logs/*
 app/bootstrap.php.cache
 vendor/
-components/
 app/config/parameters.yml
+app/config/deploy.rb
 bin/
-/web/js
-/web/css
-/web/assetic
-/web/bundles
+web/js

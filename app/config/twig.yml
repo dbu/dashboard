@@ -1,5 +1,0 @@
-twig:
-    debug:            %kernel.debug%
-    strict_variables: %kernel.debug%
-    globals:
-        status_badges: %status_badges%
