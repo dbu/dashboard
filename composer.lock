@@ -94,16 +94,16 @@
         },
         {
             "name": "digitalkaoz/issues-bundle",
-            "version": "0.1",
+            "version": "0.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/digitalkaoz/IssuesBundle.git",
-                "reference": "9d419549b3ed5c05f29d19bd7b5787d9f652e334"
+                "reference": "277fa869989068eb1385ffe68cbd0bc448e1ce30"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/digitalkaoz/IssuesBundle/zipball/9d419549b3ed5c05f29d19bd7b5787d9f652e334",
-                "reference": "9d419549b3ed5c05f29d19bd7b5787d9f652e334",
+                "url": "https://api.github.com/repos/digitalkaoz/IssuesBundle/zipball/277fa869989068eb1385ffe68cbd0bc448e1ce30",
+                "reference": "277fa869989068eb1385ffe68cbd0bc448e1ce30",
                 "shasum": ""
             },
             "require": {
@@ -127,7 +127,7 @@
             ],
             "description": "Symfony Bundle for digitalkaoz/issues",
             "homepage": "https://github.com/digitalkaoz/IssuesBundle",
-            "time": "2014-10-15 09:07:44"
+            "time": "2014-10-16 10:37:03"
         },
         {
             "name": "doctrine/annotations",
